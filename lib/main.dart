@@ -62,7 +62,11 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               FlowChart(observations: hauteurData, type: "H"),
               FlowChart(observations: debitData, type: "Q"),
-              TestWidget()
+              TestWidget(),
+              Container( // Toujours laisser la map dans un container
+                height: 600,
+                child: MapScreen()
+              ),
             ],
           );
         },
