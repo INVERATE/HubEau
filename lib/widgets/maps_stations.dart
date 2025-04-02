@@ -7,7 +7,7 @@ class MapScreen extends StatefulWidget {
 }
 class _MapScreenState extends State<MapScreen> {
   late GoogleMapController mapController;
-  final LatLng _initialPosition = LatLng(37.7749, -122.4194); // San Francisco
+  final LatLng _initialPosition = LatLng(46.232193 , 2.209667); // France
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
@@ -19,7 +19,7 @@ class _MapScreenState extends State<MapScreen> {
         onMapCreated: _onMapCreated,
         initialCameraPosition: CameraPosition(
           target: _initialPosition,
-          zoom: 12,
+          zoom: 6,
         ),
       ),
     );
