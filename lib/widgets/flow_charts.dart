@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import '../models/flow_observation.dart';
 
 class FlowChart extends StatelessWidget {
-  final List<FlowObservation> observations;
+  final List<FlowObservation> observations; // Liste des observations
   final String type; // "H" ou "Q"
 
-  const FlowChart({super.key, required this.observations, required this.type});
+  const FlowChart({super.key, required this.observations, required this.type}); // Constructeur
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +27,9 @@ class FlowChart extends StatelessWidget {
                 LineChartData(
                   titlesData: FlTitlesData(show: true),
                   borderData: FlBorderData(show: true),
+                  minX: 0,
+                  maxX: observations.length.toDouble(),
+                  minY: 0,
                   lineBarsData: [
                     LineChartBarData(
                       spots: observations.asMap().entries.map((entry) {
