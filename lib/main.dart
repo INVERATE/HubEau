@@ -41,7 +41,15 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Observations de débit et hauteur ${"O919001001"}')),
+      appBar: AppBar(
+        title: const Text('Observations de débit et hauteur ${"O919001001"}',
+
+        style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+
+      ),
+        centerTitle: true,
+      backgroundColor: Colors.blue[300],
+      ),
       backgroundColor: Colors.blue[100],
       body: FutureBuilder<List<FlowObservation>>(
         future: _futureObservations,
@@ -105,6 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           child: Center(
                               child :ListView(
+                                padding: const EdgeInsets.all(8),
                                 children: [
                                   FlowChart(observations: hauteurData, type: "H"),
                                 ],
@@ -130,6 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           child: Center(
                             child :ListView(
+                              padding: const EdgeInsets.all(8),
                               children: [
                                 FlowChart(observations: debitData, type: "Q"),
                               ],
