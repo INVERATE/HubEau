@@ -41,6 +41,16 @@ class FlowChart extends StatelessWidget {
                       color: "Q" == type ? Colors.green : Colors.blue,
                       dotData: FlDotData(show: false),
                     ),
+                    LineChartBarData(
+                      spots: observations.asMap().entries.map((entry) {
+                        int index = entry.key;
+                        double value = entry.value.resultatObs;
+                        return FlSpot(index.toDouble(), value-100);
+                      }).toList(),
+                      isCurved: true,
+                      color: Colors.red,
+                      dotData: FlDotData(show: false),
+                    ),
                   ],
                 ),
               ),
