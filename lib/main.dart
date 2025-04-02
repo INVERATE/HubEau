@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/test_widget.dart';
 import '../widgets/flow_charts.dart';
 import '../models/flow_observation.dart';
 import '../services/hub_eau_flow.dart';
@@ -6,7 +7,6 @@ import '../services/hub_eau_flow.dart';
 void main() {
   runApp(const MyApp());
 }
-//commentaire
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -61,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               FlowChart(observations: hauteurData, type: "H"),
               FlowChart(observations: debitData, type: "Q"),
+              TestWidget()
             ],
           );
         },
