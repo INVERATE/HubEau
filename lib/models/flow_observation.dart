@@ -6,6 +6,7 @@ class FlowObservation {
   final String grandeurHydro; // "H" ou "Q"
   final String dateObs;
   final String libelleStatut;
+  final String stationByDepartement;
 
   FlowObservation({
     required this.codeStation,
@@ -13,6 +14,8 @@ class FlowObservation {
     required this.grandeurHydro,
     required this.dateObs,
     required this.libelleStatut,
+    required this.stationByDepartement,
+
   });
 
   factory FlowObservation.fromJson(Map<String, dynamic> json) {
@@ -22,6 +25,9 @@ class FlowObservation {
       grandeurHydro: json['grandeur_hydro'] ?? 'N/A',
       dateObs: json['date_obs'] ?? 'N/A',
       libelleStatut: json['libelle_statut'] ?? 'N/A',
+      stationByDepartement: json['code_departement'] ?? 'N/A',
+
+
     );
   }
 }

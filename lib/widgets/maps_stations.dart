@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../models/flow_observation.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -11,17 +12,51 @@ class _MapScreenState extends State<MapScreen> {
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
+
+  void _onMapTapped(LatLng position) {
+    setState(() {
+      _markers.add(
+        Marker(
+          markerId: MarkerId(position.toString()),
+          position: position,
+          infoWindow: InfoWindow(title: "Custom Location"), // nom du fleuve à mettre à partir de l'api
+        ),
+      );
+    });
+  }
+
+  void _moveToNewLoc() {
+    mapController.animateCamera(
+      CameraUpdate.newLatLng(LatLng(40.7128, -74.0060)), // New York
+    );
+  }
+
+  Set<Marker> _markers = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _markers.add(
+      Marker(
+        markerId: MarkerId("san_francisco"),
+        position: _initialPosition,
+        infoWindow: InfoWindow(title: "San Francisco", snippet: "A beautiful city!"),
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Interactive Map in Flutter")),
       body: GoogleMap(
+        onTap: _onMapTapped,
         onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(
-          target: _initialPosition,
-          zoom: 6,
-        ),
-      ),
+        initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 6),
+        markers: _markers,
+      )
     );
   }
+
+
+
 }

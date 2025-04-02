@@ -35,6 +35,19 @@ class HubEauFlow {
     }
   }
 
+  Future<List<Station>> getStationList() async {
+    final response = await dio.get(
+      '$rootPath/referentiel/stations?format=json&size=20000',
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> stationsJson = response.data['data'] ?? [];
+      return stationsJson.map((json) => Station.fromJson(json)).toList();
+    } else {
+      throw Exception('Erreur lors du chargement des stations');
+    }
+  }
+
   Future<List<FlowObservation>> getFlowByStationAndDate(String stationCode, String date) async {
     List<FlowObservation> allObservations = [];
     String? nextUrl = '$rootPath/observations_tr?format=json&code_entite=$stationCode&date_debut_obs=$date&size=200';
