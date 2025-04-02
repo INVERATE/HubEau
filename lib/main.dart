@@ -42,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Observations de débit et hauteur ${"O919001001"}')),
+      backgroundColor: Colors.blue[100],
       body: FutureBuilder<List<FlowObservation>>(
         future: _futureObservations,
         builder: (context, snapshot) {
@@ -57,12 +58,99 @@ class _MyHomePageState extends State<MyHomePage> {
           List<FlowObservation> hauteurData = filterByType(observations, "H");
           List<FlowObservation> debitData = filterByType(observations, "Q");
 
-          return ListView(
-            children: [
-              FlowChart(observations: hauteurData, type: "H"),
-              FlowChart(observations: debitData, type: "Q"),
-              TestWidget()
-            ],
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child:
+              Row(
+                children: [
+                  Container(
+                    width: 600,
+                    height: 525,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text("Map", style: TextStyle(
+                          fontSize: 24, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  SizedBox(width: 50,
+                  ),
+                  Column(
+                    children: [
+                      Center(child:
+                      Column(children: [
+                        Container(
+                          width: 500,
+                          height: 250,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 10,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                              child :ListView(
+                                children: [
+                                  FlowChart(observations: hauteurData, type: "H"),
+                                ],
+                              ),
+                          ),
+
+                        ),
+                        SizedBox(height: 25
+                        ),
+                        Container(
+                          width: 500,
+                          height: 250,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 10,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child :ListView(
+                              children: [
+                                FlowChart(observations: debitData, type: "Q"),
+                              ],
+                            ),
+                          ),
+
+                        ),
+
+                      ],
+                      ),
+
+                      )
+
+                    ],
+
+                  ),
+
+                ],
+              ),
+
+            ),
           );
         },
       ),
