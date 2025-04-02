@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
         centerTitle: true,
       backgroundColor: Colors.blue[300],
       ),
-      backgroundColor: Colors.blue[100],
+      backgroundColor: Colors.blue[200],
       body: FutureBuilder<List<FlowObservation>>(
         future: _futureObservations,
         builder: (context, snapshot) {
@@ -111,15 +111,18 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                             ],
                           ),
-                          child: Center(
-                              child :ListView(
-                                padding: const EdgeInsets.all(8),
-                                children: [
-                                  FlowChart(observations: hauteurData, type: "H"),
-                                ],
-                              ),
+                          child: Padding( // Ajoute une marge pour éviter le débordement
+                            padding: const EdgeInsets.all(8.0),
+                            child: LayoutBuilder( // Permet d'adapter le graphe à la taille disponible
+                              builder: (context, constraints) {
+                                return SizedBox(
+                                  width: constraints.maxWidth, // Occupe toute la largeur du container
+                                  height: constraints.maxHeight, // Occupe toute la hauteur du container
+                                  child: FlowChart(observations: hauteurData, type: "H"), // 🔹 Assure l'affichage
+                                );
+                              },
+                            ),
                           ),
-//yvx
                         ),
                         SizedBox(height: 25
                         ),
@@ -138,12 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ],
                           ),
                           child: Center(
-                            child :ListView(
-                              padding: const EdgeInsets.all(8),
-                              children: [
-                                FlowChart(observations: debitData, type: "Q"),
-                              ],
-                            ),
+                            child: FlowChart(observations: debitData, type: "Q"),
                           ),
 
                         ),
