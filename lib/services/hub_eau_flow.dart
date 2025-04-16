@@ -35,9 +35,9 @@ class HubEauFlow {
     }
   }
 
-  Future<List<Station>> getStationList() async {
+  Future<List<Station>> getStationListLong() async {
     final response = await dio.get(
-      '$rootPath/referentiel/stations?format=json&size=20000',
+      '$rootPath/referentiel/stations?longitude_station&format=json&size=20',
     );
 
     if (response.statusCode == 200) {
@@ -46,6 +46,35 @@ class HubEauFlow {
     } else {
       throw Exception('Erreur lors du chargement des stations');
     }
+  }
+
+
+  Future<List<Station>> getStationListLat() async {
+    final response = await dio.get(
+      '$rootPath/referentiel/stations?latitude_station&format=json&size=20',
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> stationsJson = response.data['data'] ?? [];
+      return stationsJson.map((json) => Station.fromJson(json)).toList();
+    } else {
+      throw Exception('Erreur lors du chargement des stations');
+    }
+  }
+
+  Future<List<Station>> getStationList() async {
+    final response = await dio.get(
+      '$rootPath/referentiel/stations?format=json&size=20000',
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> stationsJson = response.data['data'] ?? [];
+      print(stationsJson);
+      return stationsJson.map((json) => Station.fromJson(json)).toList();
+    } else {
+      throw Exception('Erreur lors du chargement des stations');
+    }
+
   }
 
   Future<List<FlowObservation>> getFlowByStationAndDate(String stationCode, String date) async {
@@ -74,6 +103,7 @@ class HubEauFlow {
     } catch (e) {
       throw Exception('Requête échouée : $nextUrl \nErreur: $e');
     }
+
 
     print('Nombre total d\'observations récupérées : ${allObservations.length}'); // Debug
     return allObservations;

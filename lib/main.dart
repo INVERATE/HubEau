@@ -33,10 +33,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late Future<List<FlowObservation>> _futureObservations;
 
+
   @override
   void initState() {
     super.initState();
     _futureObservations = HubEauFlow().getFlowByStationAndDate('O919001001', '2025-03-30');
+
   }
 
   @override
@@ -44,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Observations de débit et hauteur ${"O919001001"}')),
       body: FutureBuilder<List<FlowObservation>>(
-        future: _futureObservations,
+        future: _futureObservations ,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -53,6 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('Aucune donnée disponible.'));
           }
+
 
           List<FlowObservation> observations = snapshot.data!;
           List<FlowObservation> hauteurData = filterByType(observations, "H");

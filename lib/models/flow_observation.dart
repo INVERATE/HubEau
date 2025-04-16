@@ -7,6 +7,8 @@ class FlowObservation {
   final String dateObs;
   final String libelleStatut;
   final String stationByDepartement;
+  final double longitude;
+  final double latitude;
 
   FlowObservation({
     required this.codeStation,
@@ -15,6 +17,8 @@ class FlowObservation {
     required this.dateObs,
     required this.libelleStatut,
     required this.stationByDepartement,
+    required this.latitude,
+    required this.longitude,
 
   });
 
@@ -26,6 +30,9 @@ class FlowObservation {
       dateObs: json['date_obs'] ?? 'N/A',
       libelleStatut: json['libelle_statut'] ?? 'N/A',
       stationByDepartement: json['code_departement'] ?? 'N/A',
+      longitude: (json['longitude'] ?? 0).toDouble(),
+      latitude: (json['latitude'] ?? 0).toDouble(),
+
 
 
     );
