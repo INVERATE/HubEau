@@ -1,3 +1,4 @@
+// Salut c'est nono sur VsCode
 import 'package:flutter/material.dart';
 import '../widgets/test_widget.dart';
 import '../widgets/flow_charts.dart';
@@ -7,6 +8,7 @@ import '../services/hub_eau_flow.dart';
 void main() {
   runApp(const MyApp());
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -14,9 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'HubEau Stations',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const MyHomePage(),
     );
   }
@@ -35,13 +35,18 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _futureObservations = HubEauFlow().getFlowByStationAndDate('O919001001', '2025-03-30');
+    _futureObservations = HubEauFlow().getFlowByStationAndDate(
+      'O919001001',
+      '2025-03-30',
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Observations de débit et hauteur ${"O919001001"}')),
+      appBar: AppBar(
+        title: const Text('Observations de débit et hauteur ${"O919001001"}'),
+      ),
       body: FutureBuilder<List<FlowObservation>>(
         future: _futureObservations,
         builder: (context, snapshot) {
@@ -61,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               FlowChart(observations: hauteurData, type: "H"),
               FlowChart(observations: debitData, type: "Q"),
-              TestWidget()
+              TestWidget(),
             ],
           );
         },
