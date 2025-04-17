@@ -13,14 +13,14 @@ class MyApp extends StatelessWidget {
       title: 'Dynamic Favorite Cards',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.blue[200], // fond doux bleu
+        scaffoldBackgroundColor: Colors.blue[200],
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.lightBlue, // barre du haut bleue
+          backgroundColor: Colors.lightBlue,
           foregroundColor: Colors.white,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.lightBlue, // bouton bleu
+            backgroundColor: Colors.lightBlue,
             foregroundColor: Colors.white,
           ),
         ),
@@ -36,46 +36,73 @@ class FavoriteScreen extends StatefulWidget {
 }
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
-  List<Widget> favoriteCards = [];
+  List<int> favoriteCards = []; // stocke les cartes par identifiant (ex: ID)
+  int _cardId = 0;
 
   void addFavoriteCard() {
     setState(() {
-      favoriteCards.add(
-        Card(
-          color: Colors.yellow[800],
-          //color: Colors.yellowAccent[300],
-          //color: Colors.blue[200],
-          elevation: 5,
-          margin: const EdgeInsets.symmetric(vertical: 10),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          child: Container(
-            width: 150,
-            height: 200,
-            padding: const EdgeInsets.all(16),
-            child: const Center(
-              child: Text(
-                'Nouvelle carte favorite',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white, // texte blanc pour contraste
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
+      favoriteCards.add(_cardId);
+      _cardId++;
+    });
+  }
+
+  void removeFavoriteCard(int id) {
+    setState(() {
+      favoriteCards.remove(id);
     });
   }
 
   List<Widget> _buildSpacedCards() {
     List<Widget> spacedCards = [];
+
     for (int i = 0; i < favoriteCards.length; i++) {
-      spacedCards.add(favoriteCards[i]);
+      int cardId = favoriteCards[i];
+
+      spacedCards.add(
+        Card(
+          color: Colors.blue[200],
+          elevation: 5,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          child: Container(
+            width: 150,
+            height: 200,
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Carte favorite',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => removeFavoriteCard(cardId),
+                  icon: const Icon(Icons.delete, size: 16),
+                  label: const Text(
+                    'Supprimer',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue[300],
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(40),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+
       if (i < favoriteCards.length - 1) {
-        spacedCards.add(const SizedBox(width: 10)); // espace entre cartes
+        spacedCards.add(const SizedBox(width: 10));
       }
     }
+
     return spacedCards;
   }
 
@@ -97,7 +124,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 width: 500,
-                height: 210,
+                height: 230,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
@@ -123,3 +150,4 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     );
   }
 }
+
