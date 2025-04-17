@@ -119,7 +119,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                 onPressed: addFavoriteCard,
                 icon: const Icon(Icons.favorite_border),
                 label: const Text('Stations favorites'),
-              ),
+              ),//xn
               const SizedBox(height: 15),
               Container(
                 padding: const EdgeInsets.all(10),
