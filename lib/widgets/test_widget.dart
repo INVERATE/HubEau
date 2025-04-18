@@ -4,7 +4,7 @@ class TestWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Scaffold(
       margin: EdgeInsets.all(10),
       child: Text("test"),
     );
