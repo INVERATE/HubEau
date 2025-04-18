@@ -1,11 +1,13 @@
 // Widgets
 import '../widgets/test_widget.dart';
 import '../widgets/station_graph.dart';
+import '../widgets/station_favorites.dart';
 // gestion des données
 import '../provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/maps_stations.dart';
+
 
 
 
@@ -38,13 +40,14 @@ class MyHomePage extends StatelessWidget {
           return Row(
             children: [
               Expanded(
-                child: MapScreen()///////////////////////////////////////////////
+                child: MapScreen()
               ),
               Expanded(
                 child: ListView(
                   children: [
                     FlowChart(observations: provider.hauteur, type: "H"),
                     FlowChart(observations: provider.debit, type: "Q"),
+                    FavoriteStationsWidget(),
                   ],
                 ),
               ),
