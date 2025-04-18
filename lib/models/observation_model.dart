@@ -1,16 +1,16 @@
 
 
-class FlowObservation {
+class Observation {
   final String codeStation;
   final double resultatObs;
   final String grandeurHydro; // "H" ou "Q"
-  final String dateObs;
+  final DateTime dateObs;
   final String libelleStatut;
   final String stationByDepartement;
   final double longitude;
   final double latitude;
 
-  FlowObservation({
+  Observation({
     required this.codeStation,
     required this.resultatObs,
     required this.grandeurHydro,
@@ -22,12 +22,12 @@ class FlowObservation {
 
   });
 
-  factory FlowObservation.fromJson(Map<String, dynamic> json) {
-    return FlowObservation(
+  factory Observation.fromJson(Map<String, dynamic> json) {
+    return Observation(
       codeStation: json['code_station'] ?? 'N/A',
       resultatObs: (json['resultat_obs'] ?? 0).toDouble(),
       grandeurHydro: json['grandeur_hydro'] ?? 'N/A',
-      dateObs: json['date_obs'] ?? 'N/A',
+      dateObs: DateTime.parse(json['date_obs'] ?? 'N/A'),
       libelleStatut: json['libelle_statut'] ?? 'N/A',
       stationByDepartement: json['code_departement'] ?? 'N/A',
       longitude: (json['longitude'] ?? 0).toDouble(),
