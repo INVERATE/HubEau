@@ -1,4 +1,4 @@
-import '../models/flow_observation.dart'; // Import du modèle
+import '../models/observation_model.dart'; // Import du modèle
 import 'package:dio/dio.dart' as dio_http;
 
 
@@ -18,7 +18,7 @@ class Station {
 }
 
 
-class HubEauFlow {
+class HubEauAPI {
   final String rootPath = 'https://hubeau.eaufrance.fr/api/v2/hydrometrie';
   final dio_http.Dio dio = dio_http.Dio();
 
@@ -35,63 +35,27 @@ class HubEauFlow {
     }
   }
 
-  Future<List<Station>> getStationListLong() async {
-    final response = await dio.get(
-      '$rootPath/referentiel/stations?longitude_station&format=json&size=20',
-    );
-
-    if (response.statusCode == 200) {
-      List<dynamic> stationsJson = response.data['data'] ?? [];
-      return stationsJson.map((json) => Station.fromJson(json)).toList();
-    } else {
-      throw Exception('Erreur lors du chargement des stations');
-    }
-  }
-
-
-  Future<List<Station>> getStationListLat() async {
-    final response = await dio.get(
-      '$rootPath/referentiel/stations?latitude_station&format=json&size=20',
-    );
-
-    if (response.statusCode == 200) {
-      List<dynamic> stationsJson = response.data['data'] ?? [];
-      return stationsJson.map((json) => Station.fromJson(json)).toList();
-    } else {
-      throw Exception('Erreur lors du chargement des stations');
-    }
-  }
-
-  Future<List<Station>> getStationList() async {
-    final response = await dio.get(
-      '$rootPath/referentiel/stations?format=json&size=20000',
-    );
-
-    if (response.statusCode == 200) {
-      List<dynamic> stationsJson = response.data['data'] ?? [];
-      print(stationsJson);
-      return stationsJson.map((json) => Station.fromJson(json)).toList();
-    } else {
-      throw Exception('Erreur lors du chargement des stations');
-    }
-
-  }
-
-  Future<List<FlowObservation>> getFlowByStationAndDate(String stationCode, String date) async {
-    List<FlowObservation> allObservations = [];
-    String? nextUrl = '$rootPath/observations_tr?format=json&code_entite=$stationCode&date_debut_obs=$date&size=200';
+  // Fonction pour récupérer toutes les stations
+  Future<List<Station>> getAllStations() async {
+    List<Station> allStations = [];
+    String? nextUrl = '$rootPath/referentiel/stations';
 
     int maxPages = 5; // 🛑 Définit un nombre max de pages à récupérer
     int pageCount = 0;
 
     try {
       while (nextUrl != null && pageCount < maxPages) {
-        final response = await dio.get(nextUrl);
+        final response = await dio.get(nextUrl,
+          queryParameters: {
+          'format': 'json',
+          'size': 20,
+          },
+        );
 
         if (response.statusCode == 200 || response.statusCode == 206) {
-          // Ajoute les nouvelles observations
-          List<dynamic> observationsJson = response.data['data'] ?? [];
-          allObservations.addAll(observationsJson.map((json) => FlowObservation.fromJson(json)));
+          // Ajoute les stations
+          List<dynamic> stationsJson = response.data['data'] ?? [];
+          allStations.addAll(stationsJson.map((json) => Station.fromJson(json)));
 
           // Vérifie si un lien "next" est disponible
           nextUrl = response.data['next'];
@@ -104,6 +68,37 @@ class HubEauFlow {
       throw Exception('Requête échouée : $nextUrl \nErreur: $e');
     }
 
+    print('Nombre total de stations récupérées : ${allStations.length}'); // Debug
+    return allStations;
+  }
+
+  // Fonction pour récupérer les observations
+  Future<List<Observation>> getFlowByStationAndDate(String stationCode, String date) async {
+    List<Observation> allObservations = [];
+    String? nextUrl = '$rootPath/observations_tr?format=json&code_entite=$stationCode&date_debut_obs=$date&size=500';
+
+    int maxPages = 5; // 🛑 Définit un nombre max de pages à récupérer
+    int pageCount = 0;
+
+    try {
+      while (nextUrl != null && pageCount < maxPages) {
+        final response = await dio.get(nextUrl);
+
+        if (response.statusCode == 200 || response.statusCode == 206) {
+          // Ajoute les nouvelles observations
+          List<dynamic> observationsJson = response.data['data'] ?? [];
+          allObservations.addAll(observationsJson.map((json) => Observation.fromJson(json)));
+
+          // Vérifie si un lien "next" est disponible
+          nextUrl = response.data['next'];
+          pageCount++; // 🛑 Incrémente le nombre de pages récupérées
+        } else {
+          throw Exception('Erreur ${response.statusCode} : ${response.statusMessage}');
+        }
+      }
+    } catch (e) {
+      throw Exception('Requête échouée : $nextUrl \nErreur: $e');
+    }
 
     print('Nombre total d\'observations récupérées : ${allObservations.length}'); // Debug
     return allObservations;
