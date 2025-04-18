@@ -66,7 +66,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           child: Container(
             width: 150,
             height: 200,
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(8),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -99,7 +99,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
       );
 
       if (i < favoriteCards.length - 1) {
-        spacedCards.add(const SizedBox(width: 10));
+        spacedCards.add(const SizedBox(width: 5));
       }
     }
 
@@ -119,7 +119,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                 onPressed: addFavoriteCard,
                 icon: const Icon(Icons.favorite_border),
                 label: const Text('Stations favorites'),
-              ),//xn
+              ),
               const SizedBox(height: 15),
               Container(
                 padding: const EdgeInsets.all(10),
