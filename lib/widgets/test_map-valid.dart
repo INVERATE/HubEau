@@ -4,6 +4,8 @@ import '../models/observation_model.dart';
 import '../place_service.dart';
 
 class MapScreen extends StatefulWidget {
+  const MapScreen({super.key});
+
   @override
   _MapScreenState createState() => _MapScreenState();
 

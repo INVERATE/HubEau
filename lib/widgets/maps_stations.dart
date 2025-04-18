@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../models/observation_model.dart';
-import '../place_service.dart';
-import 'package:flutter/material.dart';
 import 'appconstant.dart';
-import 'dart:async';
+//import 'dart:async';
 //import '../services/hub_eau_flow.dart';
-
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -19,13 +14,11 @@ class _MapScreenState extends State<MapScreen> {
   final LatLng _initialPosition = LatLng(46.232193 , 2.209667); // France
 
   //late Future<List<FlowObservation>> _futureLatLong;
-
-
-  Completer<GoogleMapController> _controller = Completer();
+  //Completer<GoogleMapController> _controller = Completer();
 
   Iterable markers = [];
 
-  Iterable _markers = Iterable.generate(AppConstant.list.length, (index) {
+  final Iterable _markers = Iterable.generate(AppConstant.list.length, (index) {
     return Marker(
         markerId: MarkerId(AppConstant.list[index]['id']),
         position: LatLng(
