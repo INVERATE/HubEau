@@ -1,21 +1,8 @@
-import '../models/observation_model.dart'; // Import du modèle
+// Import du modèle
+import '../models/observation_model.dart';
+import '../models/station_model.dart';
 import 'package:dio/dio.dart' as dio_http;
 
-
-// Modèle pour une station
-class Station {
-  final String code;
-  final String libelle;
-
-  Station({required this.code, required this.libelle});
-
-  factory Station.fromJson(Map<String, dynamic> json) {
-    return Station(
-      code: json['code_station'] ?? 'Inconnu',
-      libelle: json['libelle_station'] ?? 'Sans nom',
-    );
-  }
-}
 
 
 class HubEauAPI {

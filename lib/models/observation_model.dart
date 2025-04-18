@@ -1,5 +1,3 @@
-
-
 class Observation {
   final String codeStation;
   final double resultatObs;

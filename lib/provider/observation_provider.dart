@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../models/observation_model.dart';
-import '../services/API.dart';
+import '../services/api.dart';
 
 class ObservationProvider extends ChangeNotifier {
   final _api = HubEauAPI();
