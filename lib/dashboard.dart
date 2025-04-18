@@ -5,6 +5,7 @@ import '../widgets/station_graph.dart';
 import '../provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../widgets/maps_stations.dart';
 
 
 
@@ -37,7 +38,7 @@ class MyHomePage extends StatelessWidget {
           return Row(
             children: [
               Expanded(
-                child: TestWidget()
+                child: MapScreen()///////////////////////////////////////////////
               ),
               Expanded(
                 child: ListView(

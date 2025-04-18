@@ -3,10 +3,9 @@ import 'package:provider/provider.dart';
 import 'provider/provider.dart';
 import 'dashboard.dart';
 import '../widgets/test_widget.dart';
-import '../widgets/flow_charts.dart';
+
 import '../widgets/maps_stations.dart';
-import '../models/flow_observation.dart';
-import '../services/hub_eau_flow.dart';
+
 
 void main() {
   runApp(const MyApp());

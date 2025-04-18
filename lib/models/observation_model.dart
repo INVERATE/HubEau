@@ -42,6 +42,6 @@ class Observation {
 
 
 // Séparer les données Hauteur (H) et Débit (Q)
-List<FlowObservation> filterByType(List<FlowObservation> observations, String type) {
+List<Observation> filterByType(List<Observation> observations, String type) {
   return observations.where((obs) => obs.grandeurHydro == type).toList();
 }
