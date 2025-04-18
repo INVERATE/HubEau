@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import '../dashboard.dart';
+import 'package:provider/provider.dart';
+import '../provider/provider.dart';
+import 'station_graph.dart';
 
 class FavoriteStationsWidget extends StatefulWidget {
   const FavoriteStationsWidget({super.key});
@@ -8,27 +12,39 @@ class FavoriteStationsWidget extends StatefulWidget {
 }
 
 class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
-  final List<int> favoriteCards = [];
+  final List<String> favoriteStations = [];
   final ScrollController _scrollController = ScrollController();
-  int _cardId = 0;
+
   int offset = 160;
 
   void addFavoriteCard() {
-    setState(() {
-      favoriteCards.add(_cardId++);
-    });
-    _scrollController.animateTo(
-      _scrollController.offset + offset,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-    );
+    final provider = Provider.of<ObservationProvider>(context, listen: false);
+    final stationId = provider.stationId;
+
+    if (stationId != null && !favoriteStations.contains(stationId)) {
+      setState(() {
+        favoriteStations.add(stationId);
+      });
+      _scrollController.animateTo(
+        _scrollController.offset + offset,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    } else {
+      // Afficher un SnackBar si la carte existe déjà
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("La station est déjà dans les favoris.")),
+      );
+    }
   }
 
-  void removeFavoriteCard(int id) {
+
+  void removeFavoriteCard(String id) {
     setState(() {
-      favoriteCards.remove(id);
+      favoriteStations.remove(id);
     });
   }
+
 
   void scrollLeft() {
     _scrollController.animateTo(
@@ -46,7 +62,26 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
     );
   }
 
-  Widget _buildFavoriteCard(int cardId) {
+  Widget _buildFavoriteCard(String stationId) {
+    final provider = Provider.of<ObservationProvider>(context);
+
+    final debitObservations = provider.debit;
+    final hauteurObservations = provider.hauteur;
+
+    double? maxDebit = debitObservations.isNotEmpty
+        ? debitObservations.map((e) => e.resultatObs).reduce((a, b) =>
+    a > b
+        ? a
+        : b)
+        : null;
+
+    double? maxHauteur = hauteurObservations.isNotEmpty
+        ? hauteurObservations.map((e) => e.resultatObs).reduce((a, b) =>
+    a > b
+        ? a
+        : b)
+        : null;
+
     return Card(
       color: Colors.grey[300],
       elevation: 5,
@@ -59,28 +94,24 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "Carte favorite $cardId",
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+              'Station favorite $stationId',
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             Text(
-              "Description de la carte favorite $cardId",
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.black,
-              ),
+              'Hauteur max: ${maxHauteur != null ? maxHauteur.toStringAsFixed(
+                  1) + ' mm' : 'N/A'}',
+              style: const TextStyle(fontSize: 12),
+            ),
+            Text(
+              'Débit max: ${maxDebit != null ? maxDebit.toStringAsFixed(1) +
+                  ' L/s' : 'N/A'}',
+              style: const TextStyle(fontSize: 12),
             ),
             ElevatedButton.icon(
-              onPressed: () => removeFavoriteCard(cardId),
+              onPressed: () => removeFavoriteCard(stationId),
               icon: const Icon(Icons.delete, size: 16, color: Colors.redAccent),
-              label: const Text(
-                'Supprimer',
-                style: TextStyle(fontSize: 12),
-              ),
+              label: const Text('Supprimer', style: TextStyle(fontSize: 12)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
@@ -92,6 +123,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
       ),
     );
   }
+
 
   @override
   void dispose() {
@@ -129,11 +161,12 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
                     controller: _scrollController,
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: favoriteCards
-                          .map((id) => Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: _buildFavoriteCard(id),
-                      ))
+                      children: favoriteStations
+                          .map((stationId) =>
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: _buildFavoriteCard(stationId),
+                          ))
                           .toList(),
                     ),
                   ),
