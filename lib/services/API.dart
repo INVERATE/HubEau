@@ -1,4 +1,4 @@
-import '../models/station_model.dart'; // Import du modèle
+import '../models/observation_model.dart'; // Import du modèle
 import 'package:dio/dio.dart' as dio_http;
 
 
@@ -18,7 +18,7 @@ class Station {
 }
 
 
-class HubEau_API {
+class HubEauAPI {
   final String rootPath = 'https://hubeau.eaufrance.fr/api/v2/hydrometrie';
   final dio_http.Dio dio = dio_http.Dio();
 
@@ -35,6 +35,44 @@ class HubEau_API {
     }
   }
 
+  // Fonction pour récupérer toutes les stations
+  Future<List<Station>> getAllStations() async {
+    List<Station> allStations = [];
+    String? nextUrl = '$rootPath/referentiel/stations';
+
+    int maxPages = 5; // 🛑 Définit un nombre max de pages à récupérer
+    int pageCount = 0;
+
+    try {
+      while (nextUrl != null && pageCount < maxPages) {
+        final response = await dio.get(nextUrl,
+          queryParameters: {
+          'format': 'json',
+          'size': 20,
+          },
+        );
+
+        if (response.statusCode == 200 || response.statusCode == 206) {
+          // Ajoute les stations
+          List<dynamic> stationsJson = response.data['data'] ?? [];
+          allStations.addAll(stationsJson.map((json) => Station.fromJson(json)));
+
+          // Vérifie si un lien "next" est disponible
+          nextUrl = response.data['next'];
+          pageCount++; // 🛑 Incrémente le nombre de pages récupérées
+        } else {
+          throw Exception('Erreur ${response.statusCode} : ${response.statusMessage}');
+        }
+      }
+    } catch (e) {
+      throw Exception('Requête échouée : $nextUrl \nErreur: $e');
+    }
+
+    print('Nombre total de stations récupérées : ${allStations.length}'); // Debug
+    return allStations;
+  }
+
+  // Fonction pour récupérer les observations
   Future<List<Observation>> getFlowByStationAndDate(String stationCode, String date) async {
     List<Observation> allObservations = [];
     String? nextUrl = '$rootPath/observations_tr?format=json&code_entite=$stationCode&date_debut_obs=$date&size=500';

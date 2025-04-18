@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => StationProvider()..selectStation("O000001001", "2025-04-12"),
+      create: (_) => ObservationProvider()..selectStation("O005002001", "2025-04-12"),
       child: MaterialApp(
         title: 'HubEau Stations',
         theme: ThemeData(

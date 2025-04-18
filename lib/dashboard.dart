@@ -1,10 +1,6 @@
 // Widgets
 import '../widgets/test_widget.dart';
 import '../widgets/station_graph.dart';
-// Modèle de gestion des données de l'API
-import '../models/station_model.dart';
-// service de communication avec l'API
-import '../services/API.dart';
 // gestion des données
 import '../provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +15,7 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<StationProvider>(context);
+    final provider = Provider.of<ObservationProvider>(context);
 
     return Scaffold(
       appBar: AppBar(title: Text('Observations Station ${provider.stationId ?? "..."}')),

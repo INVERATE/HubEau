@@ -1,11 +1,11 @@
 // lib/providers/station_provider.dart
 
 import 'package:flutter/material.dart';
-import '../models/station_model.dart';
+import '../models/observation_model.dart';
 import '../services/API.dart';
 
-class StationProvider extends ChangeNotifier {
-  final _api = HubEau_API();
+class ObservationProvider extends ChangeNotifier {
+  final _api = HubEauAPI();
 
   String? _stationId;
   List<Observation> _observations = [];
