@@ -9,7 +9,7 @@ import '../widgets/station_details.dart';
 import '../provider/observation_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../widgets/textfield.dart';
 
 
 
@@ -23,7 +23,7 @@ class MyHomePage extends StatelessWidget {
     final provider = Provider.of<ObservationProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Observations Station ${provider.stationId ?? "..."}')),
+      //appBar: AppBar(title: Text('Observations Station ${provider.stationId ?? "..."}')),
       body: Builder(
         builder: (context) {
           if (provider.isLoading) {
@@ -43,6 +43,9 @@ class MyHomePage extends StatelessWidget {
             children: [
               Expanded(
                 child: MapScreen()
+              ),
+              Expanded(
+                  child: Textfield()
               ),
               Expanded(
                 child: ListView(

@@ -36,6 +36,15 @@ class ObservationProvider extends ChangeNotifier {
     }
   }
 
+  String? _selectedDepartment;
+
+  String? get selectedDepartment => _selectedDepartment;
+
+  void selectDepartment(String dep) {
+    _selectedDepartment = dep;
+    notifyListeners();
+  }
+
   // Méthode pour filtrer les observations par type H / Q
   // renvoie une liste d'observations triées par date et par heure en ordre décroissant
   List<Observation> _filterByType(String type) {
