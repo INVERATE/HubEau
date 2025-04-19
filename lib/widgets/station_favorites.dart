@@ -62,26 +62,29 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
 
   Widget _buildFavoriteCard(String stationId) {
     final provider = Provider.of<ObservationProvider>(context);
+    final debitList = provider.debit;
+    final hauteurList = provider.hauteur;
 
-    final debitObservations = provider.debit;
-    final hauteurObservations = provider.hauteur;
+    // Trouver les max
+    double maxDebit = debitList.isNotEmpty
+        ? debitList.map((e) => e.resultatObs).reduce((a, b) => a > b ? a : b)
+        : 0;
+    double maxHauteur = hauteurList.isNotEmpty
+        ? hauteurList.map((e) => e.resultatObs).reduce((a, b) => a > b ? a : b)
+        : 0;
 
-    double? maxDebit = debitObservations.isNotEmpty
-        ? debitObservations.map((e) => e.resultatObs).reduce((a, b) =>
-    a > b
-        ? a
-        : b)
-        : null;
-
-    double? maxHauteur = hauteurObservations.isNotEmpty
-        ? hauteurObservations.map((e) => e.resultatObs).reduce((a, b) =>
-    a > b
-        ? a
-        : b)
-        : null;
+    // Déterminer la couleur selon le débit
+    Color backgroundColor;
+    if (maxDebit > 1000) {
+      backgroundColor = Colors.redAccent.shade100;
+    } else if (maxDebit > 500) {
+      backgroundColor = Colors.orangeAccent.shade100;
+    } else {
+      backgroundColor = Colors.grey.shade300;
+    }
 
     return Card(
-      color: Colors.grey[300],
+      color: backgroundColor,
       elevation: 5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Container(
@@ -93,23 +96,28 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
           children: [
             Text(
               'Station favorite $stationId',
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
               textAlign: TextAlign.center,
             ),
             Text(
-              'Hauteur max: ${maxHauteur != null ? maxHauteur.toStringAsFixed(
-                  1) + ' mm' : 'N/A'}',
-              style: const TextStyle(fontSize: 12),
+              'Hauteur max: ${maxHauteur.toStringAsFixed(0)} mm',
+              style: const TextStyle(fontSize: 12, color: Colors.black),
             ),
             Text(
-              'Débit max: ${maxDebit != null ? maxDebit.toStringAsFixed(1) +
-                  ' L/s' : 'N/A'}',
-              style: const TextStyle(fontSize: 12),
+              'Débit max: ${maxDebit.toStringAsFixed(0)} L/s',
+              style: const TextStyle(fontSize: 12, color: Colors.black),
             ),
             ElevatedButton.icon(
               onPressed: () => removeFavoriteCard(stationId),
               icon: const Icon(Icons.delete, size: 16, color: Colors.redAccent),
-              label: const Text('Supprimer', style: TextStyle(fontSize: 12)),
+              label: const Text(
+                'Supprimer',
+                style: TextStyle(fontSize: 12),
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
@@ -121,6 +129,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
       ),
     );
   }
+
 
 
   @override
