@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import '../dashboard.dart';
 import 'package:provider/provider.dart';
-import '../provider/provider.dart';
-import 'station_graph.dart';
+import '../provider/observation_provider.dart';
 
 class FavoriteStationsWidget extends StatefulWidget {
   const FavoriteStationsWidget({super.key});

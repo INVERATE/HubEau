@@ -7,8 +7,6 @@ import '../services/api.dart';
 import 'package:provider/provider.dart';
 import '../provider/station_provider.dart';
 import '../widgets/globals.dart';
-import 'package:provider/provider.dart';
-import '../provider/observation_provider.dart';
 
 
 class MapScreen extends StatefulWidget {
