@@ -9,7 +9,7 @@ import '../provider/station_provider.dart';
 import '../widgets/globals.dart';
 import 'package:provider/provider.dart';
 import '../provider/observation_provider.dart';
-
+import 'globals.dart' as globals;
 
 class MapScreen extends StatefulWidget {
   @override
@@ -71,6 +71,7 @@ class _MapScreenState extends State<MapScreen> {
           infoWindow: InfoWindow(
             title: station.libelle,
             onTap: () {
+              globals.codeStation = station.code;
               Provider.of<StationProvider>(context, listen: false).selectStation(station);
             },
           ),
