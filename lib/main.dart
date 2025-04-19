@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'provider/observation_provider.dart';
-import 'provider/station_provider.dart';
 import 'dashboard.dart';
 
 
@@ -26,8 +25,8 @@ class MyApp extends StatelessWidget {
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.lightBlue,
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.grey[200],
+              foregroundColor: Colors.black,
             ),
           ),
         ),

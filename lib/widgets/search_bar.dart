@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import '../models/station_model.dart';
-import '../provider/station_provider.dart';
 
 // gestion des données
 import '../provider/observation_provider.dart';
