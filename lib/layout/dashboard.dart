@@ -42,10 +42,17 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Row(
           children: [
             Expanded(
-              child: MapScreen(onStationSelected: _handleStationSelected),
-            ),
-            Expanded(
-              child: Textfield(),
+              child: Column(
+                children: [
+                  SizedBox(
+                      height: 100,
+                      child: Search_Bar(),
+                    ),
+                  Expanded(
+                    child: MapScreen(onStationSelected: _handleStationSelected),
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: ListView(
@@ -62,12 +69,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       );
                     },
                   ),
-
                   FavoriteStationsWidget(onStationSelected: _handleStationSelected),
                 ],
               ),
             ),
-
           ],
         ),
       ),
