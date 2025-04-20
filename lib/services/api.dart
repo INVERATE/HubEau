@@ -11,7 +11,7 @@ class HubEauAPI {
 
   Future<List<Station>> getStationListByDepartment(String dept) async {
     final url = '$rootPath/referentiel/stations?code_departement=$dept&format=json&size=20';
-    print("🔍 Requête vers : $url");
+    //print("🔍 Requête vers : $url");
 
     List<Station> allStations = [];
     String? nextUrl = url; // Commence avec l'URL de la première page
@@ -20,8 +20,8 @@ class HubEauAPI {
       while (nextUrl != null) {
         final response = await dio.get(nextUrl);
 
-        print(" Status Code : ${response.statusCode}");
-        print(" Corps réponse : ${response.data}");
+        //print(" Status Code : ${response.statusCode}");
+        //print(" Corps réponse : ${response.data}");
 
         if (response.statusCode == 200 || response.statusCode == 206) {
           List<dynamic> stationsJson = response.data['data'] ?? [];

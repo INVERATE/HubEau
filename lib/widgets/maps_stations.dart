@@ -18,6 +18,7 @@ class _MapScreenState extends State<MapScreen> {
   late GoogleMapController mapController;
   final LatLng _initialPosition = LatLng(46.232193, 2.209667); // Centre France
   BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor markerIconGrey = BitmapDescriptor.defaultMarker;
   Set<Marker> _markers = {};
   String? _lastDep;
   @override
@@ -34,15 +35,30 @@ class _MapScreenState extends State<MapScreen> {
 
   void initState() {
     super.initState();
-    addCustomMarker();
+    addCustomMarkerBlue();
+    addCustomMarkerGrey();
     _loadStations("75");
   }
 
-  void addCustomMarker(){
-    BitmapDescriptor.asset(const ImageConfiguration(), "goutte-deau.png").then(
+  void addCustomMarkerBlue(){
+    BitmapDescriptor.asset(
+        const ImageConfiguration(size: Size(30, 30)), // taille suggérée
+        'goutte-deau.png').then(
             (icon){
           setState(() {
             markerIcon = icon;
+          });
+        }
+    );
+  }
+
+  void addCustomMarkerGrey(){
+    BitmapDescriptor.asset(
+        const ImageConfiguration(size: Size(30, 30)), // taille suggérée
+        'goutte-deau-gris.png').then(
+            (icon){
+          setState(() {
+            markerIconGrey = icon;
           });
         }
     );
@@ -72,6 +88,7 @@ class _MapScreenState extends State<MapScreen> {
       //List<Station> stations = await HubEauAPI().getAllStations();
 
       List<Station> stations = await HubEauAPI().getStationListByDepartment(dep);
+      List<Station> stationsGrey = await HubEauAPI().getStationListByDepartment(dep);
 
       Set<Marker> stationMarkers = stations.map((station) {
         return Marker(
@@ -83,12 +100,27 @@ class _MapScreenState extends State<MapScreen> {
               Provider.of<StationProvider>(context, listen: false).selectStation(station);
             },
           ),
-            //icon: markerIcon
+            icon: markerIcon
+        );
+      }).toSet();
+
+      Set<Marker> stationMarkersGrey = stationsGrey.map((stationG) {
+        return Marker(
+            markerId: MarkerId(stationG.code),
+            position: LatLng(stationG.latitude, stationG.longitude),
+            infoWindow: InfoWindow(
+              title: stationG.libelle,
+              onTap: () {
+                Provider.of<StationProvider>(context, listen: false).selectStation(stationG);
+              },
+            ),
+            icon: markerIconGrey
         );
       }).toSet();
 
       setState(() {
         _markers = stationMarkers;
+        _markers = stationMarkersGrey;
       });
     } catch (e, stacktrace) {
       print("Erreur lors du chargement des stations : $e");
