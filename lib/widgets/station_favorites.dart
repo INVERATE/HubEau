@@ -82,7 +82,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
     } else {
       backgroundColor = Colors.grey.shade300;
     }
-
+//sc
     return Card(
       color: backgroundColor,
       elevation: 5,
