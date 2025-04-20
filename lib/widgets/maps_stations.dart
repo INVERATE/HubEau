@@ -63,6 +63,7 @@ class _MapScreenState extends State<MapScreen> {
       //List<Station> stations = await HubEauAPI().getAllStations();
 
       List<Station> stations_enService = await HubEauAPI().getStations(department: dep, enService: true);
+      List<Station> stations_horsService = await HubEauAPI().getStations(department: dep, enService: false);
 
       Set<Marker> stationMarkers = stations_enService.map((station) {
         return Marker(
@@ -105,6 +106,8 @@ class _MapScreenState extends State<MapScreen> {
         child: GoogleMap(
           onMapCreated: _onMapCreated,
           initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 6),
+          myLocationEnabled: true,
+          myLocationButtonEnabled: true,
           markers: _markers,
         ),
       ),
