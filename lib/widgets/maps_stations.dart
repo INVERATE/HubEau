@@ -146,8 +146,8 @@ class _MapScreenState extends State<MapScreen> {
 
 
       setState(() {
-        _markers = stationMarkers;
-        _markers.addAll(stationMarkers_horsService);
+        _markers = stationMarkers_horsService;
+        _markers.addAll(stationMarkers); // Ajoute les markers des stations en service après, pour les afficher en premier plan
       });
     } catch (e, stacktrace) {
       print("Erreur lors du chargement des stations : $e");
