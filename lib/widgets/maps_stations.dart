@@ -35,7 +35,8 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-    _loadStations(); // Charge toutes les stations au démarrage, mettre un département si besoin
+    //_loadStations("75");
+    _loadStations("75"); // Charge toutes les stations au démarrage, mettre un département si besoin
   }
 
   /// Charge les stations depuis l'API et les transforme en markers

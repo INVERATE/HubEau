@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/observation_provider.dart';
+import '../models/station_model.dart';
+import '../services/api.dart';
 
 class FavoriteCardData {
   final String stationId;
@@ -21,7 +23,6 @@ class FavoriteStationsWidget extends StatefulWidget {
   @override
   State<FavoriteStationsWidget> createState() => _FavoriteStationsWidgetState();
 }
-
 
 class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
   final List<FavoriteCardData> favoriteStations = [];
@@ -46,7 +47,6 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
       final maxHauteur = hauteurList.isNotEmpty
           ? hauteurList.map((e) => e.resultatObs).reduce((a, b) => a > b ? a : b).toDouble()
           : 0.0;
-
 
       final newCard = FavoriteCardData(
         stationId: stationId,
@@ -92,6 +92,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
     );
   }
 
+  // Fonction pour récupérer les informations de la station
   Widget _buildFavoriteCard(FavoriteCardData cardData) {
     final maxDebit = cardData.maxDebit;
     final maxHauteur = cardData.maxHauteur;
@@ -114,12 +115,9 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
           SnackBar(content: Text('Station sélectionnée : ${cardData.stationId}'), duration: const Duration(seconds: 1),),
         );
       },
-
-
       child: Card(
         color: backgroundColor,
         elevation: 5,
-        //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: Container(
           width: 150,
           height: 220,
@@ -127,23 +125,6 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Station ${cardData.stationId}',
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              Text(
-                'Hauteur max: ${maxHauteur.toStringAsFixed(0)} mm',
-                style: const TextStyle(fontSize: 12, color: Colors.black),
-              ),
-              Text(
-                'Débit max: ${maxDebit.toStringAsFixed(0)} L/s',
-                style: const TextStyle(fontSize: 12, color: Colors.black),
-              ),
               ElevatedButton.icon(
                 onPressed: () => removeFavoriteCard(cardData.stationId),
                 icon: const Icon(Icons.delete, size: 16, color: Colors.redAccent),
@@ -157,13 +138,45 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
                   minimumSize: const Size.fromHeight(40),
                 ),
               ),
+              FutureBuilder<Station>(
+                future: HubEauAPI().getStationByCode(cardData.stationId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text("Erreur : ${snapshot.error}");
+                  } else if (!snapshot.hasData) {
+                    return const Text("Aucune donnée disponible");
+                  }
+                  final station = snapshot.data!;
+                  return Column(
+                    children: [
+                      Text(
+                        'Nom : ${station.libelle}',
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'Code : ${station.code}',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ],
+                  );
+                },
+              ),
+              Text(
+                'Hauteur max: ${maxHauteur.toStringAsFixed(0)} mm',
+                style: const TextStyle(fontSize: 12, color: Colors.black),
+              ),
+              Text(
+                'Débit max: ${maxDebit.toStringAsFixed(0)} L/s',
+                style: const TextStyle(fontSize: 12, color: Colors.black),
+              ),
             ],
           ),
         ),
       ),
     );
   }
-
 
   @override
   void dispose() {

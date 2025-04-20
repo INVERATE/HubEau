@@ -1,6 +1,6 @@
 class Station {
   final String code;
-  final String codePostal;
+  final String codeCommune;
   final String libelle;
   final double latitude;
   final double longitude;
@@ -10,7 +10,7 @@ class Station {
 
   Station({
     required this.code,
-    required this.codePostal,
+    required this.codeCommune,
     required this.libelle,
     required this.latitude,
     required this.longitude,
@@ -22,7 +22,7 @@ class Station {
   factory Station.fromJson(Map<String, dynamic> json) {
     return Station(
       code: json['code_station'] ?? 'Inconnu',
-      codePostal: json['code_commune_station'] ?? 'Inconnu',
+      codeCommune: json['code_commune_station'] ?? 'Inconnu',
       libelle: json['libelle_station'] ?? 'Sans nom',
       latitude: json['latitude_station']?.toDouble() ?? 0.0,
       longitude: json['longitude_station']?.toDouble() ?? 0.0,

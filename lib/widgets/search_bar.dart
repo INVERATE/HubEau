@@ -53,7 +53,7 @@ class _Search_BarState extends State<Search_Bar> {
             return TextField(
                 controller: controller,
                 focusNode: focusNode,
-                autofocus: true,
+                autofocus: false, // evite que le clavier apparaisse automatiquement
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Département',
