@@ -46,17 +46,19 @@ class FlowChart extends StatelessWidget {
     final minY = (minVal - margin).clamp(double.negativeInfinity, double.infinity).toDouble();
     final maxY = maxVal + margin;
 
+    final height = 130.0;
+
 
     // Construction du widget en fonction du chargement des données
     Widget content;
     if (isLoading) {
-      content = const SizedBox(
-        height: 150,
+      content = SizedBox(
+        height: height,
         child: Center(child: CircularProgressIndicator()),
       );
     } else if (observations.isEmpty) {
-      content = const SizedBox(
-        height: 150,
+      content = SizedBox(
+        height: height,
         child: Center(child: Text("Aucune donnée disponible")),
       );
     } else {
@@ -65,7 +67,7 @@ class FlowChart extends StatelessWidget {
           final isWideLayout = constraints.maxWidth > 400;
           if (isWideLayout) {
             return SizedBox(
-              height: 150,
+              height: height,
               child: Row(
                 children: [
                   _buildStatsColumn(type, moyenne, minVal, maxVal, observations),
@@ -91,9 +93,9 @@ class FlowChart extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 _buildStatsWrap(type, moyenne, minVal, maxVal, observations),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 SizedBox(
-                  height: 180,
+                  height: height,
                   child: _buildChart(
                     observations,
                     spots,

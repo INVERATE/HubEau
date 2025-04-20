@@ -73,18 +73,12 @@ class _StationDetailsState extends State<StationDetails> {
                 ),
                 const SizedBox(height: 8),
 
-                // Titre souligné "Code"
+                // Titre souligné "Code" et "Code Commune"
                 Row(
                   children: [
                     _buildSectionTitle("Code : "),
                     Text(station.code, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12)),
-                  ],
-                ),
-                const SizedBox(height: 8),
-
-                // Titre souligné "Code commune"
-                Row(
-                  children: [
+                    SizedBox(width: 8),
                     _buildSectionTitle("Code commune : "),
                     Text(station.codeCommune, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12)),
                   ],
@@ -112,7 +106,6 @@ class _StationDetailsState extends State<StationDetails> {
                             "Ouvrir",
                             style: TextStyle(color: Colors.blue, fontSize: 12),
                             overflow: TextOverflow.ellipsis,
-
                           ),
                         ),
                       ],
