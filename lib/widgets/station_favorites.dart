@@ -136,7 +136,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black,
                   minimumSize: const Size.fromHeight(40),
-                ),
+                ),//fe
               ),
               FutureBuilder<Station>(
                 future: HubEauAPI().getStationByCode(cardData.stationId),
@@ -144,7 +144,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
-                    return Text("Erreur : ${snapshot.error}");
+                    return Text("La connexion avec l'API rencontre actuellement quelques problèmes");
                   } else if (!snapshot.hasData) {
                     return const Text("Aucune donnée disponible");
                   }
