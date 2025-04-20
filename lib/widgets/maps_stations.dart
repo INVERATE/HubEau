@@ -5,6 +5,13 @@ import '../models/station_model.dart';
 import '../services/api.dart';
 import 'package:provider/provider.dart';
 
+import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
+import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
+
 
 class MapScreen extends StatefulWidget {
   final void Function(String stationCode)? onStationSelected;
@@ -14,13 +21,28 @@ class MapScreen extends StatefulWidget {
   _MapScreenState createState() => _MapScreenState();
 }
 
-
 class _MapScreenState extends State<MapScreen> {
   late GoogleMapController mapController;
   final LatLng _initialPosition = LatLng(46.232193, 2.209667); // Centre France
-
+  BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor markerIconGrey = BitmapDescriptor.defaultMarker;
   Set<Marker> _markers = {};
+  Uint8List? marketimages;
+  List<String> images = ['goutte-deau.png','goutte-deau-gris.png'];
+
+  // declared method to get Images
+  Future<Uint8List> getImages(String path, int width) async{
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetHeight: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return(await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+
+  }
+
+  // created empty list of markers
+  final List<Marker> _markersL = <Marker>[];
   String? _lastDep;
+
 
   @override
   void didChangeDependencies() {
@@ -35,8 +57,34 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
+    addCustomMarkerBlue();
+    addCustomMarkerGrey();
     //_loadStations("75");
     _loadStations("75"); // Charge toutes les stations au démarrage, mettre un département si besoin
+  }
+
+  void addCustomMarkerBlue(){
+    BitmapDescriptor.asset(
+        const ImageConfiguration(size: Size(30, 30)), // taille suggérée
+        'goutte-deau.png').then(
+            (icon){
+          setState(() {
+            markerIcon = icon;
+          });
+        }
+    );
+  }
+
+  void addCustomMarkerGrey(){
+    BitmapDescriptor.asset(
+        const ImageConfiguration(size: Size(30, 30)), // taille suggérée
+        'goutte-deau-gris.png').then(
+            (icon){
+          setState(() {
+            markerIconGrey = icon;
+          });
+        }
+    );
   }
 
   /// Charge les stations depuis l'API et les transforme en markers
@@ -63,6 +111,7 @@ class _MapScreenState extends State<MapScreen> {
       //List<Station> stations = await HubEauAPI().getAllStations();
 
       List<Station> stations_enService = await HubEauAPI().getStations(department: dep, enService: true);
+      List<Station> stations_horsService = await HubEauAPI().getStations(department: dep, enService: false);
 
       Set<Marker> stationMarkers = stations_enService.map((station) {
         return Marker(
@@ -70,16 +119,35 @@ class _MapScreenState extends State<MapScreen> {
           position: LatLng(station.latitude, station.longitude),
           infoWindow: InfoWindow(
             title: station.libelle,
-          ),
-          onTap: () {
-            widget.onStationSelected?.call(station.code); // Appel du callback, permet de passer la station sélectionnée au parent
-            print("Station sélectionnée : ${station.code}");
-          },
+            ),
+            onTap: () {
+              widget.onStationSelected?.call(station.code); // Appel du callback, permet de passer la station sélectionnée au parent
+              print("Station sélectionnée : ${station.code}");
+            },
+            icon: markerIcon
         );
       }).toSet();
 
+      Set<Marker> stationMarkers_horsService = stations_horsService.map((station) {
+        return Marker(
+            markerId: MarkerId(station.code),
+            position: LatLng(station.latitude, station.longitude),
+            infoWindow: InfoWindow(
+              title: station.libelle,
+            ),
+            onTap: () {
+              widget.onStationSelected?.call(station.code); // Appel du callback, permet de passer la station sélectionnée au parent
+              print("Station sélectionnée : ${station.code}");
+            },
+            icon: markerIconGrey
+        );
+      }).toSet();
+
+
+
       setState(() {
-        _markers = stationMarkers;
+        _markers = stationMarkers_horsService;
+        _markers.addAll(stationMarkers); // Ajoute les markers des stations en service après, pour les afficher en premier plan
       });
     } catch (e, stacktrace) {
       print("Erreur lors du chargement des stations : $e");
@@ -100,13 +168,11 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: GoogleMap(
-          onMapCreated: _onMapCreated,
-          initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 6),
-          markers: _markers,
-        ),
+      child: GoogleMap(
+        mapType: MapType.terrain,
+        onMapCreated: _onMapCreated,
+        initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 6),
+        markers: _markers,
       ),
     );
   }

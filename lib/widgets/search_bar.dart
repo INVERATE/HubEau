@@ -56,7 +56,7 @@ class _Search_BarState extends State<Search_Bar> {
               autofocus: false, // evite que le clavier apparaisse automatiquement
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Département',
+                labelText: 'Choisissez un département',
               ),
               onSubmitted: (val) {
                 if (dep.contains(val)) {
