@@ -6,8 +6,9 @@ import 'package:intl/intl.dart';
 class FlowChart extends StatelessWidget {
   final List<Observation> observations;
   final String type; // "Q" ou "H"
-  final bool isLoading;
+  final bool isLoading; // Indique si le chargement des données à partir de l'API est en cours
 
+  // Constructeur
   const FlowChart({
     super.key,
     required this.observations,
@@ -17,14 +18,18 @@ class FlowChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    // Calcul des données pour le graphique
     final spots = observations.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.resultatObs);
     }).toList();
 
+    // Calcul de la moyenne
     final moyenne = observations.isNotEmpty
         ? (observations.map((e) => e.resultatObs).reduce((a, b) => a + b) / observations.length).toDouble()
         : 0.0;
 
+    // Calcul des labels pour les axes
     final dateLabels = observations.map((obs) {
       return DateFormat('dd/MM').format(obs.dateObs);
     }).toList();
@@ -32,15 +37,17 @@ class FlowChart extends StatelessWidget {
       return DateFormat('dd/MM HH:mm').format(obs.dateObs);
     }).toList();
 
+    // Calcul des limites du graphique
     final values = observations.map((e) => e.resultatObs).toList();
     final minVal = values.isNotEmpty ? values.reduce((a, b) => a < b ? a : b).toDouble() : 0.0;
     final maxVal = values.isNotEmpty ? values.reduce((a, b) => a > b ? a : b).toDouble() : 1.0;
-
     final range = maxVal - minVal;
     final margin = range * 0.05;
     final minY = (minVal - margin).clamp(double.negativeInfinity, double.infinity).toDouble();
     final maxY = maxVal + margin;
 
+
+    // Construction du widget en fonction du chargement des données
     Widget content;
     if (isLoading) {
       content = const SizedBox(
@@ -106,6 +113,7 @@ class FlowChart extends StatelessWidget {
       );
     }
 
+    // Construction du widget
     return Card(
       margin: const EdgeInsets.all(10),
       child: Padding(
@@ -223,6 +231,7 @@ class FlowChart extends StatelessWidget {
       List<String> dateHourLabels,
       double range
       ) {
+
     //Graphique
     return LineChart(
       LineChartData(
