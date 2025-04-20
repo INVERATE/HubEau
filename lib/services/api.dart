@@ -42,7 +42,38 @@ class HubEauAPI {
     return allStations;
   }
 
+  Future<List<Station>> getStationListByDepartmentNull(String dept) async {
+    final url = '$rootPath/referentiel/stations?code_departement=$dept&format=json&size=20';
+    //print("🔍 Requête vers : $url");
 
+    List<Station> allStations = [];
+    String? nextUrl = url; // Commence avec l'URL de la première page
+
+    try {
+      while (nextUrl != null) {
+        final response = await dio.get(nextUrl);
+
+        //print(" Status Code : ${response.statusCode}");
+        //print(" Corps réponse : ${response.data}");
+
+        if ( response.statusCode == null) {
+          List<dynamic> stationsJson = response.data['data'] ?? [];
+          allStations.addAll(stationsJson.map((json) => Station.fromJson(json)));
+
+          // Vérifie si un lien "next" est présent pour récupérer la page suivante
+          nextUrl = response.data['next']; // Cette variable contient l'URL de la page suivante
+        } else {
+          throw Exception('Erreur ${response.statusCode}: ${response.statusMessage}');
+        }
+      }
+    } catch (e) {
+      print(" Erreur sur la requête : $e");
+      rethrow;
+    }
+
+    print('Nombre total de stations récupérées : ${allStations.length}'); // Debug
+    return allStations;
+  }
 
   // Fonction pour récupérer toutes les stations
   Future<List<Station>> getAllStations() async {

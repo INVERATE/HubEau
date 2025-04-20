@@ -1,3 +1,5 @@
+//import 'dart:nativewrappers/_internal/vm/lib/typed_data_patch.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../provider/observation_provider.dart';
@@ -7,6 +9,13 @@ import '../services/api.dart';
 import 'package:provider/provider.dart';
 import '../provider/station_provider.dart';
 import '../widgets/globals.dart';
+
+import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
+import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 
 
 class MapScreen extends StatefulWidget {
@@ -20,8 +29,22 @@ class _MapScreenState extends State<MapScreen> {
   BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
   BitmapDescriptor markerIconGrey = BitmapDescriptor.defaultMarker;
   Set<Marker> _markers = {};
+  Uint8List? marketimages;
+  List<String> images = ['goutte-deau.png','goutte-deau-gris.png'];
+
+  // declared method to get Images
+  Future<Uint8List> getImages(String path, int width) async{
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetHeight: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return(await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+
+  }
+
+  // created empty list of markers
+  final List<Marker> _markersL = <Marker>[];
   String? _lastDep;
-  @override
+
 
   @override
   void didChangeDependencies() {
@@ -88,7 +111,7 @@ class _MapScreenState extends State<MapScreen> {
       //List<Station> stations = await HubEauAPI().getAllStations();
 
       List<Station> stations = await HubEauAPI().getStationListByDepartment(dep);
-      List<Station> stationsGrey = await HubEauAPI().getStationListByDepartment(dep);
+      //List<Station> stationsGrey = await HubEauAPI().getStationListByDepartmentNull(dep);
 
       Set<Marker> stationMarkers = stations.map((station) {
         return Marker(
@@ -104,23 +127,11 @@ class _MapScreenState extends State<MapScreen> {
         );
       }).toSet();
 
-      Set<Marker> stationMarkersGrey = stationsGrey.map((stationG) {
-        return Marker(
-            markerId: MarkerId(stationG.code),
-            position: LatLng(stationG.latitude, stationG.longitude),
-            infoWindow: InfoWindow(
-              title: stationG.libelle,
-              onTap: () {
-                Provider.of<StationProvider>(context, listen: false).selectStation(stationG);
-              },
-            ),
-            icon: markerIconGrey
-        );
-      }).toSet();
+
 
       setState(() {
         _markers = stationMarkers;
-        _markers = stationMarkersGrey;
+
       });
     } catch (e, stacktrace) {
       print("Erreur lors du chargement des stations : $e");
@@ -146,8 +157,9 @@ class _MapScreenState extends State<MapScreen> {
           mapType: MapType.terrain, // Normal, Satellite, Terrain, Hybrid
           onMapCreated: _onMapCreated,
           initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 6),
-
+          //////////////////markers: Set<Marker>.of(snapshot.data ?? []),
           markers: _markers,
+
 
       ),
     );
