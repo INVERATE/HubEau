@@ -18,14 +18,6 @@ class Station {
     required this.enService,
   });
 
-  static double? _parseValidAltitude(dynamic value) {
-    if (value == null) return null;
-    final double? alt = double.tryParse(value.toString());
-    if (alt == null) return null;
-    if (alt < -100 || alt > 5000) return null; // seuils réalistes
-    return alt;
-  }
-
 
   factory Station.fromJson(Map<String, dynamic> json) {
     return Station(

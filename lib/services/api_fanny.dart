@@ -3,7 +3,6 @@
 
 
 import 'package:dio/dio.dart';
-import '../models/observation_model.dart'; // Import du modèle
 import 'package:dio/dio.dart' as dio_http;
 
 final dio = Dio();

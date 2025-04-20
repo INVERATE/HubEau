@@ -4,7 +4,6 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 // gestion des données
 import '../provider/observation_provider.dart';
 import 'package:provider/provider.dart';
-import 'globals.dart' as globals;
 
 class Search_Bar extends StatefulWidget {
   const Search_Bar({super.key});

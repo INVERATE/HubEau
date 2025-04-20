@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../models/observation_model.dart';
-import '../services/place_service.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -33,11 +31,11 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
-  void _moveToNewLoc() {
-    mapController.animateCamera(
-      CameraUpdate.newLatLng(LatLng(40.7128, -74.0060)), // New York
-    );
-  }
+  //void _moveToNewLoc() {
+  //  mapController.animateCamera(
+  //    CameraUpdate.newLatLng(LatLng(40.7128, -74.0060)), // New York
+  //  );
+  //}
 
   Set<Marker> _markers = {};
 

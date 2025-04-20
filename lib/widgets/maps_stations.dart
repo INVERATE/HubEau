@@ -90,11 +90,11 @@ class _MapScreenState extends State<MapScreen> {
     mapController = controller;
   }
 
-  void _moveToNewLoc() {
-    mapController.animateCamera(
-      CameraUpdate.newLatLng(LatLng(40.7128, -74.0060)), // New York
-    );
-  }
+  //void _moveToNewLoc() {
+  //  mapController.animateCamera(
+  //    CameraUpdate.newLatLng(LatLng(40.7128, -74.0060)), // New York
+  //  );
+  //}
 
   @override
   Widget build(BuildContext context) {
