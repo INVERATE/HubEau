@@ -27,6 +27,7 @@ class FavoriteStationsWidget extends StatefulWidget {
 class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
   final List<FavoriteCardData> favoriteStations = [];
   final ScrollController _scrollController = ScrollController();
+  final Map<String, Station> _stationCache = {}; // ✅ Cache local
 
   int offset = 160;
 
@@ -73,6 +74,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
   void removeFavoriteCard(String stationId) {
     setState(() {
       favoriteStations.removeWhere((card) => card.stationId == stationId);
+      _stationCache.remove(stationId); // ❌ Supprime aussi du cache si on veut
     });
   }
 
@@ -92,7 +94,16 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
     );
   }
 
-  // Fonction pour récupérer les informations de la station
+  // ✅ Fonction de cache
+  Future<Station> _getStation(String stationId) async {
+    if (_stationCache.containsKey(stationId)) {
+      return _stationCache[stationId]!;
+    }
+    final station = await HubEauAPI().getStationByCode(stationId);
+    _stationCache[stationId] = station;
+    return station;
+  }
+
   Widget _buildFavoriteCard(FavoriteCardData cardData) {
     final maxDebit = cardData.maxDebit;
     final maxHauteur = cardData.maxHauteur;
@@ -112,7 +123,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
         provider.stationId = cardData.stationId;
         widget.onStationSelected?.call(cardData.stationId);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Station sélectionnée : ${cardData.stationId}'), duration: const Duration(seconds: 1),),
+          SnackBar(content: Text('Station sélectionnée : ${cardData.stationId}'), duration: const Duration(seconds: 1)),
         );
       },
       child: Card(
@@ -136,15 +147,15 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black,
                   minimumSize: const Size.fromHeight(40),
-                ),//fe
+                ),
               ),
               FutureBuilder<Station>(
-                future: HubEauAPI().getStationByCode(cardData.stationId),
+                future: _getStation(cardData.stationId), // ✅ utilise cache
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
-                    return Text("La connexion avec l'API rencontre actuellement quelques problèmes");
+                    return const Text("Erreur de connexion à l'API");
                   } else if (!snapshot.hasData) {
                     return const Text("Aucune donnée disponible");
                   }
