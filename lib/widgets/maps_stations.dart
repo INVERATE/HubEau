@@ -61,7 +61,7 @@ class _MapScreenState extends State<MapScreen> {
       //List<Station> stations = await HubEauAPI().getStationListByDepartment("95");
       //List<Station> stations = await HubEauAPI().getAllStations();
 
-      List<Station> stations = await HubEauAPI().getStationListByDepartment(dep);
+      List<Station> stations = await HubEauAPI().getStations();
 
       Set<Marker> stationMarkers = stations.map((station) {
         return Marker(

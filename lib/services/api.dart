@@ -1,115 +1,82 @@
-// Import du modèle
 import '../models/observation_model.dart';
 import '../models/station_model.dart';
 import 'package:dio/dio.dart' as dio_http;
-
-
 
 class HubEauAPI {
   final String rootPath = 'https://hubeau.eaufrance.fr/api/v2/hydrometrie';
   final dio_http.Dio dio = dio_http.Dio();
 
-  Future<List<Station>> getStationListByDepartment(String dept) async {
-    final url = '$rootPath/referentiel/stations?code_departement=$dept&format=json&size=20';
-    print("🔍 Requête vers : $url");
-
-    List<Station> allStations = [];
-    String? nextUrl = url; // Commence avec l'URL de la première page
-
-    try {
-      while (nextUrl != null) {
-        final response = await dio.get(nextUrl);
-
-        print(" Status Code : ${response.statusCode}");
-        print(" Corps réponse : ${response.data}");
-
-        if (response.statusCode == 200 || response.statusCode == 206) {
-          List<dynamic> stationsJson = response.data['data'] ?? [];
-          allStations.addAll(stationsJson.map((json) => Station.fromJson(json)));
-
-          // Vérifie si un lien "next" est présent pour récupérer la page suivante
-          nextUrl = response.data['next']; // Cette variable contient l'URL de la page suivante
-        } else {
-          throw Exception('Erreur ${response.statusCode}: ${response.statusMessage}');
-        }
-      }
-    } catch (e) {
-      print(" Erreur sur la requête : $e");
-      rethrow;
-    }
-
-    print('Nombre total de stations récupérées : ${allStations.length}'); // Debug
-    return allStations;
-  }
-
-
-
-  // Fonction pour récupérer toutes les stations
-  Future<List<Station>> getAllStations() async {
-    List<Station> allStations = [];
-    String? nextUrl = '$rootPath/referentiel/stations';
-
-    int maxPages = 5; // 🛑 Définit un nombre max de pages à récupérer
+  // Méthode générique de pagination pour n'importe quel type de donnée
+  Future<List<T>> _paginate<T>({
+    required String url,
+    Map<String, dynamic>? queryParameters,
+    required T Function(Map<String, dynamic>) fromJson,
+    int maxPages = 10,
+  }) async {
+    List<T> results = [];
+    String? nextUrl;
     int pageCount = 0;
 
     try {
-      while (nextUrl != null && pageCount < maxPages) {
-        final response = await dio.get(nextUrl,
-          queryParameters: {
-          'format': 'json',
-          'size': 20,
-          },
+      do {
+        final response = await dio.get(
+          nextUrl ?? url,
+          queryParameters: nextUrl == null ? queryParameters : null,
         );
 
         if (response.statusCode == 200 || response.statusCode == 206) {
-          // Ajoute les stations
-          List<dynamic> stationsJson = response.data['data'] ?? [];
-          allStations.addAll(stationsJson.map((json) => Station.fromJson(json)));
+          List<dynamic> data = response.data['data'] ?? [];
+          results.addAll(data.map((json) => fromJson(json)));
 
-          // Vérifie si un lien "next" est disponible
           nextUrl = response.data['next'];
-          pageCount++; // 🛑 Incrémente le nombre de pages récupérées
+          pageCount++;
         } else {
           throw Exception('Erreur ${response.statusCode} : ${response.statusMessage}');
         }
-      }
+      } while (nextUrl != null && pageCount < maxPages);
     } catch (e) {
-      throw Exception('Requête échouée : $nextUrl \nErreur: $e');
+      throw Exception('Erreur lors de la pagination de $url : $e');
     }
 
-    print('Nombre total de stations récupérées : ${allStations.length}'); // Debug
-    return allStations;
+    return results;
   }
 
-  // Fonction pour récupérer les observations
-  Future<List<Observation>> getFlowByStationAndDate(String stationCode, String date) async {
-    List<Observation> allObservations = [];
-    String? nextUrl = '$rootPath/observations_tr?format=json&code_entite=$stationCode&date_debut_obs=$date&size=500';
+  // Stations : toutes ou par département
+  Future<List<Station>> getStations({String? department, int maxPages = 10}) {
+    final url = '$rootPath/referentiel/stations';
+    final query = {
+      'format': 'json',
+      'size': 1000,
+      if (department != null) 'code_departement': department,
+    };
 
-    int maxPages = 5; // 🛑 Définit un nombre max de pages à récupérer
-    int pageCount = 0;
+    return _paginate<Station>(
+      url: url,
+      queryParameters: query,
+      fromJson: (json) => Station.fromJson(json),
+      maxPages: maxPages,
+    );
+  }
 
-    try {
-      while (nextUrl != null && pageCount < maxPages) {
-        final response = await dio.get(nextUrl);
+  // Observations : par station et date
+  Future<List<Observation>> getFlowByStationAndDate(
+      String stationCode,
+      String date, {
+        int maxPages = 5,
+      }) {
+    final url = '$rootPath/observations_tr';
+    final query = {
+      'format': 'json',
+      'code_entite': stationCode,
+      'date_debut_obs': date,
+      'size': 1000,
+    };
 
-        if (response.statusCode == 200 || response.statusCode == 206) {
-          // Ajoute les nouvelles observations
-          List<dynamic> observationsJson = response.data['data'] ?? [];
-          allObservations.addAll(observationsJson.map((json) => Observation.fromJson(json)));
-
-          // Vérifie si un lien "next" est disponible
-          nextUrl = response.data['next'];
-          pageCount++; // 🛑 Incrémente le nombre de pages récupérées
-        } else {
-          throw Exception('Erreur ${response.statusCode} : ${response.statusMessage}');
-        }
-      }
-    } catch (e) {
-      throw Exception('Requête échouée : $nextUrl \nErreur: $e');
-    }
-
-    print('Nombre total d\'observations récupérées : ${allObservations.length}'); // Debug
-    return allObservations;
+    return _paginate<Observation>(
+      url: url,
+      queryParameters: query,
+      fromJson: (json) => Observation.fromJson(json),
+      maxPages: maxPages,
+    );
   }
 }

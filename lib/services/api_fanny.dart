@@ -1,3 +1,7 @@
+// ⚠️⚠️⚠️ ce code n'est pas utilisé
+// backup d'un ancien code pour récupérer les données de localisation des stations
+
+
 import 'package:dio/dio.dart';
 import '../models/observation_model.dart'; // Import du modèle
 import 'package:dio/dio.dart' as dio_http;
@@ -28,7 +32,7 @@ class HubEauAPILocalisation {
 
   Future<List<Post>> getStationListLong(String dept) async {
     final response = await dio.get(
-      '$rootPath/referentiel/stations?code_departement=$dept&format=json&size=20',
+      '$rootPath/referentiel/stations?code_departement=$dept&format=json&size=200',
     );
 
     if (response.statusCode == 200) {
