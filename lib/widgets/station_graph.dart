@@ -266,13 +266,13 @@ class FlowChart extends StatelessWidget {
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: false,
-              reservedSize: 70,
+              reservedSize: 70, // largeur laissée pour le texte
               interval: (range / 5).clamp(1, double.infinity),
               getTitlesWidget: (value, meta) {
-                if ((value - minY).abs() < 1e-2 || (value - maxY).abs() < 1e-2) {
-                  return const SizedBox.shrink();
-                }
-                return Text(value.toStringAsFixed(0), style: const TextStyle(fontSize: 12));
+                return Text(
+                  value.toStringAsFixed(1), // ou 0 pour arrondir
+                  style: const TextStyle(fontSize: 12, color: Colors.black87),
+                );
               },
             ),
           ),
@@ -315,7 +315,10 @@ class FlowChart extends StatelessWidget {
             isCurved: true,
             color: type == "Q" ? Colors.green : Colors.blue,
             dotData: FlDotData(show: false),
-            belowBarData: BarAreaData(show: false),
+            belowBarData: BarAreaData(
+              show: true,
+              color: (type == "Q" ? Colors.green : Colors.blue).withOpacity(0.3), // ← ici
+            ),
           ),
         ],
 

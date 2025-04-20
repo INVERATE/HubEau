@@ -203,23 +203,26 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
                 icon: const Icon(Icons.arrow_back_ios),
               ),
               Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  height: 230,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: favoriteStations
-                          .map((cardData) => Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: _buildFavoriteCard(cardData),
-                      ))
-                          .toList(),
+                child:
+                Card(
+                  child: ClipRRect(
+                    borderRadius: (Theme.of(context).cardTheme.shape as RoundedRectangleBorder).borderRadius,
+                    child: Container(
+                      height: 230,
+                      padding: const EdgeInsets.all(10),
+                      color: Theme.of(context).cardTheme.color ?? Colors.white,
+                      child: SingleChildScrollView(
+                        controller: _scrollController,
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: favoriteStations
+                              .map((cardData) => Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: _buildFavoriteCard(cardData),
+                          ))
+                              .toList(),
+                        ),
+                      ),
                     ),
                   ),
                 ),

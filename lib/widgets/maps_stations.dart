@@ -168,11 +168,14 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: GoogleMap(
-        mapType: MapType.terrain,
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 6),
-        markers: _markers,
+      child: ClipRRect(
+        borderRadius: (Theme.of(context).cardTheme.shape as RoundedRectangleBorder).borderRadius,
+        child: GoogleMap(
+          mapType: MapType.terrain,
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 6),
+          markers: _markers,
+        ),
       ),
     );
   }
