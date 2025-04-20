@@ -128,10 +128,26 @@ class _MapScreenState extends State<MapScreen> {
         );
       }).toSet();
 
+      Set<Marker> stationMarkers_horsService = stations_horsService.map((station) {
+        return Marker(
+            markerId: MarkerId(station.code),
+            position: LatLng(station.latitude, station.longitude),
+            infoWindow: InfoWindow(
+              title: station.libelle,
+            ),
+            onTap: () {
+              widget.onStationSelected?.call(station.code); // Appel du callback, permet de passer la station sélectionnée au parent
+              print("Station sélectionnée : ${station.code}");
+            },
+            icon: markerIconGrey
+        );
+      }).toSet();
+
 
 
       setState(() {
         _markers = stationMarkers;
+        _markers.addAll(stationMarkers_horsService);
       });
     } catch (e, stacktrace) {
       print("Erreur lors du chargement des stations : $e");
