@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../provider/observation_provider.dart';
 import '../models/station_model.dart';
+import '../models/observation_model.dart';
 import '../services/api.dart';
 import 'package:provider/provider.dart';
 
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/services.dart';
@@ -113,6 +113,19 @@ class _MapScreenState extends State<MapScreen> {
       List<Station> stations_enService = await HubEauAPI().getStations(department: dep, enService: true);
       List<Station> stations_horsService = await HubEauAPI().getStations(department: dep, enService: false);
 
+
+      // suppression des faux positifs
+      //for (Station station in stations_enService) {
+      //  List<Observation> observations = await HubEauAPI().getFlowByStationAndDate(station.code, "2025-04-12");
+      //  bool hasNoData = observations.isEmpty;
+      //  print("Station ${station.code} : ${hasNoData ? "Sans données" : "Avec données"}");
+      //  if (hasNoData) {
+      //    // retirer de la liste des stations avec données
+      //    stations_enService.remove(station);
+      //    stations_horsService.add(station);
+      //  }
+      //}
+
       Set<Marker> stationMarkers = stations_enService.map((station) {
         return Marker(
           markerId: MarkerId(station.code),
@@ -127,6 +140,7 @@ class _MapScreenState extends State<MapScreen> {
             icon: markerIcon
         );
       }).toSet();
+
 
       Set<Marker> stationMarkers_horsService = stations_horsService.map((station) {
         return Marker(
