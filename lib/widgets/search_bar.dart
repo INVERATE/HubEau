@@ -51,13 +51,13 @@ class _Search_BarState extends State<Search_Bar> {
           //suggestionsCallback: List<Station> stations = await HubEauAPI().getStationListByDepartment("94"),
           builder: (context, controller, focusNode) {
             return TextField(
-                controller: controller,
-                focusNode: focusNode,
-                autofocus: false, // evite que le clavier apparaisse automatiquement
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Département',
-                ),
+              controller: controller,
+              focusNode: focusNode,
+              autofocus: false, // evite que le clavier apparaisse automatiquement
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Département',
+              ),
               onSubmitted: (val) {
                 if (dep.contains(val)) {
                   _handleDepartmentSelection(val);

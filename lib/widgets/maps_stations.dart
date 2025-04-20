@@ -62,9 +62,9 @@ class _MapScreenState extends State<MapScreen> {
       //List<Station> stations = await HubEauAPI().getStationListByDepartment("95");
       //List<Station> stations = await HubEauAPI().getAllStations();
 
-      List<Station> stations = await HubEauAPI().getStations(department: dep);
+      List<Station> stations_enService = await HubEauAPI().getStations(department: dep, enService: true);
 
-      Set<Marker> stationMarkers = stations.map((station) {
+      Set<Marker> stationMarkers = stations_enService.map((station) {
         return Marker(
           markerId: MarkerId(station.code),
           position: LatLng(station.latitude, station.longitude),

@@ -42,12 +42,13 @@ class HubEauAPI {
   }
 
   // Stations : toutes ou par département
-  Future<List<Station>> getStations({String? department, int maxPages = 10}) {
+  Future<List<Station>> getStations({String? department, int maxPages = 10, bool? enService}) {
     final url = '$rootPath/referentiel/stations';
     final query = {
       'format': 'json',
       'size': 1000,
       if (department != null) 'code_departement': department,
+      if (enService != null) 'en_service': enService ? 1 : 0,
     };
 
     return _paginate<Station>(
