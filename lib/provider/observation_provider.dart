@@ -49,7 +49,7 @@ class ObservationProvider extends ChangeNotifier {
     final filtered = _observations
         .where((o) => o.grandeurHydro == type)
         .toList()
-      ..sort((a, b) => b.dateObs.compareTo(a.dateObs)); // tri décroissant
+      ..sort((a, b) => -b.dateObs.compareTo(a.dateObs));
     return filtered;
   }
 
