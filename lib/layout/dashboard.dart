@@ -1,0 +1,90 @@
+// Widgets
+import '../../widgets/test_widget.dart';
+import '../../widgets/station_graph.dart';
+import '../../widgets/station_favorites.dart';
+import '../../widgets/maps_stations.dart';
+import '../../widgets/station_details.dart';
+
+//Layout
+import '../../layout/layout_colonne_station.dart';
+
+// gestion des données
+import '../../provider/observation_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../widgets/search_bar.dart';
+
+
+
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  late final ObservationProvider _provider;
+
+  @override
+  void initState() {
+    super.initState();
+    _provider = ObservationProvider();
+  }
+
+  void _handleStationSelected(String stationCode) {
+    _provider.selectStation(stationCode, "2025-04-12");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: ChangeNotifierProvider.value(
+        value: _provider,
+        child: Row(
+          children: [
+            Expanded(
+              child: MapScreen(onStationSelected: _handleStationSelected),
+            ),
+            Expanded(
+              child: Textfield(),
+            ),
+            Expanded(
+              child: ListView(
+                children: [
+                  // Partie dynamique : uniquement les widgets qui dépendent du provider
+                  Consumer<ObservationProvider>(
+                    builder: (context, provider, _) {
+                      if (provider.isLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      if (provider.error != null) {
+                        return Center(child: Text('Erreur : ${provider.error}'));
+                      }
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          FlowChart(observations: provider.hauteur, type: "H"),
+                          FlowChart(observations: provider.debit, type: "Q"),
+                        ],
+                      );
+                    },
+                  ),
+
+                  // Partie statique (non dépendante du provider)
+                  const FavoriteStationsWidget(),
+                ],
+              ),
+            ),
+
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+

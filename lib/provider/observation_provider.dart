@@ -1,62 +1,61 @@
-// lib/providers/station_provider.dart
-
 import 'package:flutter/material.dart';
 import '../models/observation_model.dart';
 import '../services/api.dart';
 
 class ObservationProvider extends ChangeNotifier {
-  final _api = HubEauAPI();
+  final HubEauAPI _api = HubEauAPI();
 
   String? _stationId;
+  String? _selectedDepartment;
   List<Observation> _observations = [];
   bool _isLoading = false;
   String? _error;
 
+  // === INFORMATIONS PUBLICS ===
   String? get stationId => _stationId;
-  List<Observation> get observations => _observations;
+  String? get selectedDepartment => _selectedDepartment;
+  List<Observation> get observations => List.unmodifiable(_observations);
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  List<Observation> get hauteur => _filterByType("H");
-  List<Observation> get debit => _filterByType("Q");
+  List<Observation> get hauteur => _filteredByType("H");
+  List<Observation> get debit => _filteredByType("Q");
 
+  // === MISE À JOUR DE LA STATION ===
   Future<void> selectStation(String stationId, String date) async {
     _stationId = stationId;
-    _isLoading = true;
+    _setLoading(true);
     _error = null;
-    notifyListeners();
 
     try {
-      _observations = await _api.getFlowByStationAndDate(stationId, date);
+      final result = await _api.getFlowByStationAndDate(stationId, date);
+      _observations = result;
     } catch (e) {
       _error = e.toString();
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _setLoading(false);
     }
   }
 
-  String? _selectedDepartment;
-
-  String? get selectedDepartment => _selectedDepartment;
-
-  void selectDepartment(String dep) {
-    _selectedDepartment = dep;
+  // === MISE À JOUR DU DÉPARTEMENT ===
+  void selectDepartment(String departmentCode) {
+    if (_selectedDepartment == departmentCode) return;
+    _selectedDepartment = departmentCode;
     notifyListeners();
   }
 
-  // Méthode pour filtrer les observations par type H / Q
-  // renvoie une liste d'observations triées par date et par heure en ordre décroissant
-  List<Observation> _filterByType(String type) {
-    _observations.sort((a, b) {
-      if (a.dateObs.isBefore(b.dateObs)) {
-        return -1;
-      } else if (a.dateObs.isAfter(b.dateObs)) {
-        return 1;
-      } else {
-        return b.dateObs.hour.compareTo(a.dateObs.hour);
-      }
-    });
-    return _observations.where((o) => o.grandeurHydro == type).toList();
+  // === FILTRAGE DES OBSERVATIONS SELON LE TYPE (H ou Q) ===
+  List<Observation> _filteredByType(String type) {
+    final filtered = _observations
+        .where((o) => o.grandeurHydro == type)
+        .toList()
+      ..sort((a, b) => b.dateObs.compareTo(a.dateObs)); // tri décroissant
+    return filtered;
+  }
+
+  // === ÉTAT DE CHARGEMENT DE LA PAGE ===
+  void _setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
   }
 }

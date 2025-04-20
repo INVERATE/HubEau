@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../provider/observation_provider.dart';
-import 'appconstant.dart';
 import '../models/station_model.dart';
 import '../services/api.dart';
 import 'package:provider/provider.dart';
-import '../provider/station_provider.dart';
-import '../widgets/globals.dart';
 
 
 class MapScreen extends StatefulWidget {
+  final void Function(String stationCode)? onStationSelected;
+
+  const MapScreen({Key? key, this.onStationSelected}) : super(key: key);
+
   @override
   _MapScreenState createState() => _MapScreenState();
 }
+
 
 class _MapScreenState extends State<MapScreen> {
   late GoogleMapController mapController;
@@ -68,10 +70,11 @@ class _MapScreenState extends State<MapScreen> {
           position: LatLng(station.latitude, station.longitude),
           infoWindow: InfoWindow(
             title: station.libelle,
-            onTap: () {
-              Provider.of<StationProvider>(context, listen: false).selectStation(station);
-            },
           ),
+          onTap: () {
+            widget.onStationSelected?.call(station.code); // Appel du callback
+            print("Station sélectionnée : ${station.code}");
+          },
         );
       }).toSet();
 

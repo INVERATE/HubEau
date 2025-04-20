@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../models/observation_model.dart';
-import '../place_service.dart';
+import '../services/place_service.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
