@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../provider/station_provider.dart';
+import 'package:test_flutter_api/models/observation_model.dart';
+import '../provider/observation_provider.dart';
 
 class StationDetails extends StatelessWidget {
+  const StationDetails({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final selectedStation = Provider.of<StationProvider>(context).selectedStation;
+    final selectedStation = Provider.of<ObservationProvider>(context).stationId;
 
+    Widget content;
     if (selectedStation == null) {
-      return Center(child: Text("Clique sur un point de la carte pour voir les détails"));
+      content = Text("Aucun point sélectionné");
+    }
+    else {
+      content = Text("Station : $selectedStation", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold));
     }
 
     return Card(
@@ -18,11 +25,9 @@ class StationDetails extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Station : ${selectedStation.libelle}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            content,
             SizedBox(height: 8),
             SizedBox(height: 12),
-            // Tu peux ajouter ici un widget graphique
-            Placeholder(fallbackHeight: 100), // Remplace par ton widget de graphique
           ],
         ),
       ),

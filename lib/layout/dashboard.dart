@@ -63,6 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
+                          StationDetails(),
                           FlowChart(observations: provider.hauteur, type: "H", isLoading: provider.isLoading),
                           FlowChart(observations: provider.debit, type: "Q", isLoading: provider.isLoading),
                         ],

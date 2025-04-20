@@ -114,10 +114,12 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
           SnackBar(content: Text('Station sélectionnée : ${cardData.stationId}'), duration: const Duration(seconds: 1),),
         );
       },
+
+
       child: Card(
         color: backgroundColor,
         elevation: 5,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: Container(
           width: 150,
           height: 220,
