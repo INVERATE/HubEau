@@ -79,4 +79,22 @@ class HubEauAPI {
       maxPages: maxPages,
     );
   }
+
+  // Informations d'une station à partir de son code
+  Future<Station> getStationByCode(String stationCode, {int maxPages = 1}) async {
+    final url = '$rootPath/referentiel/stations';
+    final query = {
+      'format': 'json',
+      'size': 1,
+      'code_station': stationCode,
+    };
+
+    return _paginate<Station>(
+      url: url,
+      queryParameters: query,
+      fromJson: (json) => Station.fromJson(json),
+      maxPages: maxPages,
+    ).then((stations) => stations.first);
+
+  }
 }

@@ -19,7 +19,6 @@ class Observation {
     required this.stationByDepartement,
     required this.latitude,
     required this.longitude,
-
   });
 
   factory Observation.fromJson(Map<String, dynamic> json) {
@@ -32,16 +31,6 @@ class Observation {
       stationByDepartement: json['code_departement'] ?? 'N/A',
       longitude: (json['longitude'] ?? 0).toDouble(),
       latitude: (json['latitude'] ?? 0).toDouble(),
-
-
-
     );
   }
-}
-
-
-
-// Séparer les données Hauteur (H) et Débit (Q)
-List<Observation> filterByType(List<Observation> observations, String type) {
-  return observations.where((obs) => obs.grandeurHydro == type).toList();
 }

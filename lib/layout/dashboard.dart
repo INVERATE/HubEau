@@ -57,13 +57,14 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(
               child: ListView(
                 children: [
+                  StationDetails(),
+
                   // Partie dynamique : uniquement les widgets qui dépendent du provider
                   Consumer<ObservationProvider>(
                     builder: (context, provider, _) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          StationDetails(),
                           FlowChart(observations: provider.hauteur, type: "H", isLoading: provider.isLoading),
                           FlowChart(observations: provider.debit, type: "Q", isLoading: provider.isLoading),
                         ],

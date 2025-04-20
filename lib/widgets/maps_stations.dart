@@ -35,11 +35,11 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-    _loadStations("75");
+    _loadStations(); // Charge toutes les stations au démarrage, mettre un département si besoin
   }
 
   /// Charge les stations depuis l'API et les transforme en markers
-  Future<void> _loadStations(String dep) async {
+  Future<void> _loadStations([String? dep]) async {
     try {
       //List<String> dep = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86", "87", "88", "89", "90", "91", "92", "93", "94", "95"];
 
@@ -61,7 +61,7 @@ class _MapScreenState extends State<MapScreen> {
       //List<Station> stations = await HubEauAPI().getStationListByDepartment("95");
       //List<Station> stations = await HubEauAPI().getAllStations();
 
-      List<Station> stations = await HubEauAPI().getStations();
+      List<Station> stations = await HubEauAPI().getStations(department: dep);
 
       Set<Marker> stationMarkers = stations.map((station) {
         return Marker(
@@ -99,10 +99,13 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: GoogleMap(
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 6),
-        markers: _markers,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GoogleMap(
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 6),
+          markers: _markers,
+        ),
       ),
     );
   }
