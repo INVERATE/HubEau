@@ -6,43 +6,25 @@ import 'package:intl/intl.dart';
 class FlowChart extends StatelessWidget {
   final List<Observation> observations;
   final String type; // "Q" ou "H"
-  const FlowChart({super.key, required this.observations, required this.type});
+  final bool isLoading;
+
+  const FlowChart({
+    super.key,
+    required this.observations,
+    required this.type,
+    required this.isLoading
+  });
 
   @override
   Widget build(BuildContext context) {
-
-    // Si aucune donnée n'est disponible, afficher un message
-    if (observations.isEmpty) {
-      return Card(
-          margin: const EdgeInsets.all(10),
-          child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Column(
-                children: [
-                  Text(
-                    type == "Q" ? "Débit" : "Hauteur",
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 150,
-                    child: const Center(child: Text('Aucune donnée disponible.')),
-                  )
-                ],
-              )
-          )
-      );
-    }
-
-
     final spots = observations.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.resultatObs);
     }).toList();
 
-    // Calcul de la moyenne
-    final moyenne = observations.map((e) => e.resultatObs).reduce((a, b) => a + b) / observations.length;
+    final moyenne = observations.isNotEmpty
+        ? (observations.map((e) => e.resultatObs).reduce((a, b) => a + b) / observations.length).toDouble()
+        : 0.0;
 
-    // Labels pour les dates
     final dateLabels = observations.map((obs) {
       return DateFormat('dd/MM').format(obs.dateObs);
     }).toList();
@@ -50,81 +32,99 @@ class FlowChart extends StatelessWidget {
       return DateFormat('dd/MM HH:mm').format(obs.dateObs);
     }).toList();
 
-    // Calcul des limites
     final values = observations.map((e) => e.resultatObs).toList();
-    final minVal = values.reduce((a, b) => a < b ? a : b);
-    final maxVal = values.reduce((a, b) => a > b ? a : b);
+    final minVal = values.isNotEmpty ? values.reduce((a, b) => a < b ? a : b).toDouble() : 0.0;
+    final maxVal = values.isNotEmpty ? values.reduce((a, b) => a > b ? a : b).toDouble() : 1.0;
 
-    // Ajouter une marge de 5%
     final range = maxVal - minVal;
     final margin = range * 0.05;
     final minY = (minVal - margin).clamp(double.negativeInfinity, double.infinity).toDouble();
     final maxY = maxVal + margin;
 
-    // Affichage du graphique
-    return Card(
-      margin: const EdgeInsets.all(10),
-      child: LayoutBuilder(
+    Widget content;
+    if (isLoading) {
+      content = const SizedBox(
+        height: 150,
+        child: Center(child: CircularProgressIndicator()),
+      );
+    } else if (observations.isEmpty) {
+      content = const SizedBox(
+        height: 150,
+        child: Center(child: Text("Aucune donnée disponible")),
+      );
+    } else {
+      content = LayoutBuilder(
         builder: (context, constraints) {
-          // Définir une largeur minimale pour l'affichage horizontal
-          final bool isWideLayout = constraints.maxWidth > 400;
-
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Column(
+          final isWideLayout = constraints.maxWidth > 400;
+          if (isWideLayout) {
+            return SizedBox(
+              height: 150,
+              child: Row(
+                children: [
+                  _buildStatsColumn(type, moyenne, minVal, maxVal, observations),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _buildChart(
+                      observations,
+                      spots,
+                      moyenne,
+                      minY,
+                      maxY,
+                      type,
+                      dateLabels,
+                      dateHourLabels,
+                      range,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  type == "Q" ? "Débit" : "Hauteur",
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-
-                // Layout conditionnel basé sur la largeur disponible
-                if (isWideLayout)
-                // Affichage côte à côte pour les écrans larges
-                  SizedBox(
-                    height: 150,
-                    child: Row(
-                      children: [
-                        // Statistiques à gauche
-                        _buildStatsColumn(type, moyenne, minVal, maxVal, observations),
-                        const SizedBox(width: 10),
-                        // Graphique à droite
-                        Expanded(
-                          child: _buildChart(
-                              observations, spots, moyenne, minY, maxY,
-                              type, dateLabels, dateHourLabels, range
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                else
-                // Affichage vertical pour les écrans plus étroits
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Statistiques en haut
-                      _buildStatsWrap(type, moyenne, minVal, maxVal, observations),
-                      const SizedBox(height: 16),
-                      // Graphique en bas
-                      SizedBox(
-                        height: 180,
-                        child: _buildChart(
-                            observations, spots, moyenne, minY, maxY,
-                            type, dateLabels, dateHourLabels, range
-                        ),
-                      ),
-                    ],
+                _buildStatsWrap(type, moyenne, minVal, maxVal, observations),
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 180,
+                  child: _buildChart(
+                    observations,
+                    spots,
+                    moyenne,
+                    minY,
+                    maxY,
+                    type,
+                    dateLabels,
+                    dateHourLabels,
+                    range,
                   ),
+                ),
               ],
-            ),
-          );
+            );
+          }
         },
+      );
+    }
+
+    return Card(
+      margin: const EdgeInsets.all(10),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              type == "Q" ? "Débit" : "Hauteur",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            content, // 👈 on insère ici le bloc correctement construit
+          ],
+        ),
       ),
     );
   }
+
 
 
   // Statistiques en colonne pour layout large
@@ -275,7 +275,7 @@ class FlowChart extends StatelessWidget {
               interval: (observations.length / 5).floorToDouble().clamp(1, double.infinity),
               getTitlesWidget: (value, meta) {
                 int index = value.toInt();
-                if (index >= 0 && index < dateLabels.length) {
+                if (index >= 0 && index < dateLabels.length-1) {
                   return Text(
                     dateLabels[index],
                     style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87),

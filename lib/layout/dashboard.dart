@@ -5,9 +5,6 @@ import '../../widgets/station_favorites.dart';
 import '../../widgets/maps_stations.dart';
 import '../../widgets/station_details.dart';
 
-//Layout
-import '../../layout/layout_colonne_station.dart';
-
 // gestion des données
 import '../../provider/observation_provider.dart';
 import 'package:flutter/material.dart';
@@ -56,26 +53,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   // Partie dynamique : uniquement les widgets qui dépendent du provider
                   Consumer<ObservationProvider>(
                     builder: (context, provider, _) {
-                      if (provider.isLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-
-                      if (provider.error != null) {
-                        return Center(child: Text('Erreur : ${provider.error}'));
-                      }
-
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          FlowChart(observations: provider.hauteur, type: "H"),
-                          FlowChart(observations: provider.debit, type: "Q"),
+                          FlowChart(observations: provider.hauteur, type: "H", isLoading: provider.isLoading),
+                          FlowChart(observations: provider.debit, type: "Q", isLoading: provider.isLoading),
                         ],
                       );
                     },
                   ),
 
                   // Partie statique (non dépendante du provider)
-                  const FavoriteStationsWidget(),
+                  FavoriteStationsWidget(),
                 ],
               ),
             ),
