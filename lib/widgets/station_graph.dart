@@ -126,7 +126,7 @@ class FlowChart extends StatelessWidget {
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            content, // 👈 on insère ici le bloc correctement construit
+            content, // Utilisation du widget content qui changera en fonction du chargement des données
           ],
         ),
       ),

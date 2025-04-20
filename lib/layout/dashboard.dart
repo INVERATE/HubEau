@@ -63,8 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                   ),
 
-                  // Partie statique (non dépendante du provider)
-                  FavoriteStationsWidget(),
+                  FavoriteStationsWidget(onStationSelected: _handleStationSelected),
                 ],
               ),
             ),

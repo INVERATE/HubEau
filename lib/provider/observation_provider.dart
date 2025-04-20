@@ -22,6 +22,12 @@ class ObservationProvider extends ChangeNotifier {
   List<Observation> get debit => _filteredByType("Q");
 
   // === MISE À JOUR DE LA STATION ===
+  set stationId(String? id) {
+    _stationId = id;
+    notifyListeners();
+  }
+
+
   Future<void> selectStation(String stationId, String date) async {
     _stationId = stationId;
     _setLoading(true);

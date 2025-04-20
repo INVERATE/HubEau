@@ -9,8 +9,7 @@ import 'package:provider/provider.dart';
 class MapScreen extends StatefulWidget {
   final void Function(String stationCode)? onStationSelected;
 
-  const MapScreen({Key? key, this.onStationSelected}) : super(key: key);
-
+  const MapScreen({super.key, this.onStationSelected});
   @override
   _MapScreenState createState() => _MapScreenState();
 }
@@ -22,7 +21,6 @@ class _MapScreenState extends State<MapScreen> {
 
   Set<Marker> _markers = {};
   String? _lastDep;
-  @override
 
   @override
   void didChangeDependencies() {
@@ -34,6 +32,7 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  @override
   void initState() {
     super.initState();
     _loadStations("75");
@@ -72,7 +71,7 @@ class _MapScreenState extends State<MapScreen> {
             title: station.libelle,
           ),
           onTap: () {
-            widget.onStationSelected?.call(station.code); // Appel du callback
+            widget.onStationSelected?.call(station.code); // Appel du callback, permet de passer la station sélectionnée au parent
             print("Station sélectionnée : ${station.code}");
           },
         );
@@ -98,7 +97,6 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   @override
-
   Widget build(BuildContext context) {
     return Card(
       child: GoogleMap(
