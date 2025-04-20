@@ -17,7 +17,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   late GoogleMapController mapController;
   final LatLng _initialPosition = LatLng(46.232193, 2.209667); // Centre France
-
+  BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
   Set<Marker> _markers = {};
   String? _lastDep;
   @override
@@ -34,7 +34,18 @@ class _MapScreenState extends State<MapScreen> {
 
   void initState() {
     super.initState();
+    addCustomMarker();
     _loadStations("75");
+  }
+
+  void addCustomMarker(){
+    BitmapDescriptor.asset(const ImageConfiguration(), "goutte-deau.png").then(
+            (icon){
+          setState(() {
+            markerIcon = icon;
+          });
+        }
+    );
   }
 
   /// Charge les stations depuis l'API et les transforme en markers
@@ -72,6 +83,7 @@ class _MapScreenState extends State<MapScreen> {
               Provider.of<StationProvider>(context, listen: false).selectStation(station);
             },
           ),
+            //icon: markerIcon
         );
       }).toSet();
 
@@ -98,10 +110,13 @@ class _MapScreenState extends State<MapScreen> {
 
   Widget build(BuildContext context) {
     return Card(
-      child: GoogleMap(
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 6),
-        markers: _markers,
+        child: GoogleMap(
+          mapType: MapType.terrain, // Normal, Satellite, Terrain, Hybrid
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 6),
+
+          markers: _markers,
+
       ),
     );
   }
