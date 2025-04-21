@@ -4,7 +4,7 @@ import '../provider/observation_provider.dart';
 import '../models/station_model.dart';
 import '../services/api.dart';
 
-
+// Classe qui affiche les informations de la station
 class StationDetails extends StatefulWidget {
   const StationDetails({super.key});
 
@@ -12,7 +12,7 @@ class StationDetails extends StatefulWidget {
   _StationDetailsState createState() => _StationDetailsState();
 }
 
-
+// Etat de la classe StationDetails
 class _StationDetailsState extends State<StationDetails> {
   Future<Station>? _stationFuture;
   String? _lastStationId;

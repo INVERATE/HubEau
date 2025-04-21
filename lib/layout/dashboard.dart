@@ -31,7 +31,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _handleStationSelected(String stationCode) {
-    _provider.selectStation(stationCode, "2025-04-12");
+    // Récupérerles données de l'API jusqu'au mois dernier plus 1 jour
+    _provider.selectStation(stationCode, DateTime.now().subtract(Duration(days: 31)).toIso8601String());
   }
 
   @override

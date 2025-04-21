@@ -22,16 +22,16 @@ class _MapScreenState extends State<MapScreen> {
   BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;   // Creation d'un icon personalisé (bleu)
   BitmapDescriptor markerIconGrey = BitmapDescriptor.defaultMarker;   // Creation d'un icon personalisé (gris)
   Set<Marker> _markers = {};  // liste de markers car on a 2 type d'icons pour les markers
-  Uint8List? marketimages;  // Truc pour que les images des markers s'affiche bien
+  //Uint8List? marketimages;  // Truc pour que les images des markers s'affiche bien
   List<String> images = ['goutte-deau.png','goutte-deau-gris.png'];   // Les 2 fameux markers
 
   // Declaration de la méthodes pour avoir les images
-  Future<Uint8List> getImages(String path, int width) async{
-    ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetHeight: width);
-    ui.FrameInfo fi = await codec.getNextFrame();
-    return(await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
-  }
+  //Future<Uint8List> getImages(String path, int width) async{
+  //  ByteData data = await rootBundle.load(path);
+  //  ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetHeight: width);
+  //  ui.FrameInfo fi = await codec.getNextFrame();
+  //  return(await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+  //}
 
   // Ce qui est initialisé au lancement du dashboard
   @override
@@ -118,7 +118,15 @@ class _MapScreenState extends State<MapScreen> {
         _markers = stationMarkers_horsService;
         _markers.addAll(stationMarkers);  // Ajoute les markers des stations en service après, pour les afficher en premier plan
       });
-    // petite impression des erreur s'il y en a
+
+      if (stations_enService.isNotEmpty) {
+        final firstStation = stations_enService.first;
+        mapController.animateCamera(CameraUpdate.newLatLng(
+          LatLng(firstStation.latitude, firstStation.longitude),
+        ));
+      }
+
+      // petite impression des erreur s'il y en a
     } catch (e, stacktrace) {
       print("Erreur lors du chargement des stations : $e");
       print("Stacktrace : $stacktrace");

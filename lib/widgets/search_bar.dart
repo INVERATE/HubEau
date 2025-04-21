@@ -51,7 +51,7 @@ class _Search_BarState extends State<Search_Bar> {
           },
 
           builder: (context, controller, focusNode) {   // créer un widget enfant
-            return TextField(   // widget bare de recherche ici textfield comme ca on peut ecrire dedans
+            return TextField(   // widget barre de recherche ici textfield comme ca on peut ecrire dedans
               controller: controller,
               focusNode: focusNode,
               autofocus: false, // evite que le clavier apparaisse automatiquement
@@ -61,7 +61,7 @@ class _Search_BarState extends State<Search_Bar> {
               ),
 
               // on Submitted permet de choisir un department en appuyant que la touche entrer du clavier
-              onSubmitted: (val) {  // une fois que l'utilisateur à finit d'écrire on recupère son texte (val)
+              onSubmitted: (val) {  // une fois que l'utilisateur a fini d'écrire on recupère son texte (val)
                 if (dep.contains(val)) {  // si le texte existe dans derpartement
                   _handleDepartmentSelection(val); // on va le chercher dans l'api
                 } else {

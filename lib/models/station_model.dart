@@ -1,3 +1,5 @@
+// Permet de mettre en forme les données de l'API pour les stations
+
 class Station {
   final String code;
   final String codeCommune;
