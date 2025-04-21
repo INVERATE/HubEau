@@ -5,8 +5,8 @@ import '../services/api.dart';
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
-
-
+import '../provider/observation_provider.dart';
+import 'package:provider/provider.dart';
 
 class MapScreen extends StatefulWidget {
   final void Function(String stationCode)? onStationSelected;
@@ -31,6 +31,18 @@ class _MapScreenState extends State<MapScreen> {
     ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetHeight: width);
     ui.FrameInfo fi = await codec.getNextFrame();
     return(await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+  }
+
+  String? _lastDep;   // permet de dire : si _lastDep est pas là c'est pas grave
+  @override
+  // méthode pour récuperer le departement sélectionné
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final selectedDep = Provider.of<ObservationProvider>(context).selectedDepartment;   // provider notifie toute les fonctions abonnées au provider quand y'a un changement ici le département
+    if (selectedDep != null && selectedDep != _lastDep) {
+      _lastDep = selectedDep;  // _lastDep : departement précédement sélectionner
+      _loadStations(selectedDep); // faire les stations du departement choisit
+    }
   }
 
   // Ce qui est initialisé au lancement du dashboard
