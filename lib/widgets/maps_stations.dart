@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../provider/observation_provider.dart';
 import '../models/station_model.dart';
-import '../models/observation_model.dart';
 import '../services/api.dart';
-import 'package:provider/provider.dart';
-
 import 'dart:async';
 import 'dart:ui' as ui;
-
 import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
+
 
 
 class MapScreen extends StatefulWidget {
@@ -23,58 +18,44 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   late GoogleMapController mapController;
-  final LatLng _initialPosition = LatLng(46.232193, 2.209667); // Centre France
-  BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
-  BitmapDescriptor markerIconGrey = BitmapDescriptor.defaultMarker;
-  Set<Marker> _markers = {};
-  Uint8List? marketimages;
-  List<String> images = ['goutte-deau.png','goutte-deau-gris.png'];
+  final LatLng _initialPosition = LatLng(46.232193, 2.209667);  // Le centre de la maps est le Centre France
+  BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;   // Creation d'un icon personalisé (bleu)
+  BitmapDescriptor markerIconGrey = BitmapDescriptor.defaultMarker;   // Creation d'un icon personalisé (gris)
+  Set<Marker> _markers = {};  // liste de markers car on a 2 type d'icons pour les markers
+  Uint8List? marketimages;  // Truc pour que les images des markers s'affiche bien
+  List<String> images = ['goutte-deau.png','goutte-deau-gris.png'];   // Les 2 fameux markers
 
-  // declared method to get Images
+  // Declaration de la méthodes pour avoir les images
   Future<Uint8List> getImages(String path, int width) async{
     ByteData data = await rootBundle.load(path);
     ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetHeight: width);
     ui.FrameInfo fi = await codec.getNextFrame();
     return(await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
-
   }
 
-  // created empty list of markers
-  final List<Marker> _markersL = <Marker>[];
-  String? _lastDep;
-
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final selectedDep = Provider.of<ObservationProvider>(context).selectedDepartment;
-    if (selectedDep != null && selectedDep != _lastDep) {
-      _lastDep = selectedDep;
-      _loadStations(selectedDep);
-    }
-  }
-
+  // Ce qui est initialisé au lancement du dashboard
   @override
   void initState() {
     super.initState();
-    addCustomMarkerBlue();
-    addCustomMarkerGrey();
-    //_loadStations("75");
-    _loadStations("75"); // Charge toutes les stations au démarrage, mettre un département si besoin
+    addCustomMarkerBlue();  // le marker spécial bleu
+    addCustomMarkerGrey();  // le marker spécial gris
+    _loadStations("75");  // Charge toutes les stations au démarrage, mettre un département si besoin
   }
 
+  // méthode pour avoir les markers bleu
   void addCustomMarkerBlue(){
     BitmapDescriptor.asset(
-        const ImageConfiguration(size: Size(30, 30)), // taille suggérée
+        const ImageConfiguration(size: Size(30, 30)),   // ici avec asset on configure les markers (taille + image)
         'goutte-deau.png').then(
             (icon){
           setState(() {
-            markerIcon = icon;
+            markerIcon = icon;  // on créer un état de markers ici markerIcon sera le bleu
           });
         }
     );
   }
 
+  // pareil pour les gris
   void addCustomMarkerGrey(){
     BitmapDescriptor.asset(
         const ImageConfiguration(size: Size(30, 30)), // taille suggérée
@@ -87,61 +68,35 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  /// Charge les stations depuis l'API et les transforme en markers
+  // Charge les stations depuis l'API et les transforme en markers
   Future<void> _loadStations([String? dep]) async {
     try {
-      //List<String> dep = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86", "87", "88", "89", "90", "91", "92", "93", "94", "95"];
 
-      //List<String> dep = ["75", "92", "93", "94", "95"];
-      //List<String> dep = [value];
-
-      //List<Future<List<Station>>> futures = dep.map((codeDep) {
-      //  return HubEauAPI().getStationListByDepartment(codeDep);
-      //}).toList();
-
-      //List<List<Station>> allStationsLists = await Future.wait(futures);
-
-
-
-// Aplatir la liste de listes en une seule liste
-      //List<Station> stations = allStationsLists.expand((list) => list).toList();
-
-
-      //List<Station> stations = await HubEauAPI().getStationListByDepartment("95");
-      //List<Station> stations = await HubEauAPI().getAllStations();
-
+      // ici on créer une liste avec les stations qui ont des info : enservice: true, elles auront des markers bleu
       List<Station> stations_enService = await HubEauAPI().getStations(department: dep, enService: true);
+
+      // ici on créer une liste avec les stations qui ont PAS d'info : enservice: false, elles auront des markers gris
       List<Station> stations_horsService = await HubEauAPI().getStations(department: dep, enService: false);
 
-
-      // suppression des faux positifs
-      //for (Station station in stations_enService) {
-      //  List<Observation> observations = await HubEauAPI().getFlowByStationAndDate(station.code, "2025-04-12");
-      //  bool hasNoData = observations.isEmpty;
-      //  print("Station ${station.code} : ${hasNoData ? "Sans données" : "Avec données"}");
-      //  if (hasNoData) {
-      //    // retirer de la liste des stations avec données
-      //    stations_enService.remove(station);
-      //    stations_horsService.add(station);
-      //  }
-      //}
-
+      // Placement des markers sur la carte
+      // on fait un map sur la liste stations_enService comme ca on pourra avoir les stations de la liste (nommé stationMarkers) 1 part 1
       Set<Marker> stationMarkers = stations_enService.map((station) {
-        return Marker(
-          markerId: MarkerId(station.code),
-          position: LatLng(station.latitude, station.longitude),
+        return Marker(    // pour chaque stations on revoit un markers qui aura
+          markerId: MarkerId(station.code),   // comme ID le code de la station
+          position: LatLng(station.latitude, station.longitude),  // pour position la latitude et la longitude de la station
           infoWindow: InfoWindow(
-            title: station.libelle,
+            title: station.libelle,   // et une petite popo up avec son libelle quand on clique sur le markers
             ),
-            onTap: () {
-              widget.onStationSelected?.call(station.code); // Appel du callback, permet de passer la station sélectionnée au parent
+            onTap: () {   // cela permettra de faire marcher les graph quand on tape sur le markers
+              widget.onStationSelected?.call(station.code);   // Appel du callback, permet de passer la station sélectionnée au parent
               print("Station sélectionnée : ${station.code}");
             },
-            icon: markerIcon
+            icon: markerIcon   // le markers sera le bleu
         );
       }).toSet();
 
 
+      // de même pour la liste stations_horsService sauf que le markers sera gris
       Set<Marker> stationMarkers_horsService = stations_horsService.map((station) {
         return Marker(
             markerId: MarkerId(station.code),
@@ -150,45 +105,45 @@ class _MapScreenState extends State<MapScreen> {
               title: station.libelle,
             ),
             onTap: () {
-              widget.onStationSelected?.call(station.code); // Appel du callback, permet de passer la station sélectionnée au parent
+              widget.onStationSelected?.call(station.code);   // Appel du callback, permet de passer la station sélectionnée au parent
               print("Station sélectionnée : ${station.code}");
             },
-            icon: markerIconGrey
+            icon: markerIconGrey  // markers gris
         );
       }).toSet();
 
-
-
+      // on affiche les markers grace a setState
+      // si on inverse les 2 ligne, c'est la première ligne qui s'executera en première
       setState(() {
         _markers = stationMarkers_horsService;
-        _markers.addAll(stationMarkers); // Ajoute les markers des stations en service après, pour les afficher en premier plan
+        _markers.addAll(stationMarkers);  // Ajoute les markers des stations en service après, pour les afficher en premier plan
       });
+    // petite impression des erreur s'il y en a
     } catch (e, stacktrace) {
       print("Erreur lors du chargement des stations : $e");
       print("Stacktrace : $stacktrace");
     }
   }
 
+
+  // c'est finit avec les markers on fait la carte maintenant
+
+  // methode de creation de la carte
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
 
-  //void _moveToNewLoc() {
-  //  mapController.animateCamera(
-  //    CameraUpdate.newLatLng(LatLng(40.7128, -74.0060)), // New York
-  //  );
-  //}
-
+  // implémentation de la carte google maps
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
+    return Card(  // elle se situe dans une card
+      child: Padding(   // elle a cette taille grâce à padding
         padding: const EdgeInsets.all(8.0),
-        child: GoogleMap(
-          mapType: MapType.terrain,
-          onMapCreated: _onMapCreated,
-          initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 6),
-          markers: _markers,
+        child: GoogleMap(   // la voila
+          mapType: MapType.terrain,   // terrain pour avoir les reliefs (il existe aussi normal, hybrid, satellite
+          onMapCreated: _onMapCreated,  // on fait appel à la méthode pour la carte
+          initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 6),   // elle est zoommer sur 6 comme ca on voit toute la France, plus on zoom plus c'est proche
+          markers: _markers,  // on place notre liste de markers
         ),
       ),
     );
