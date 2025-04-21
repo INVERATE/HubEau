@@ -491,7 +491,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
             borderRadius: BorderRadius.circular(15.0), // Légèrement plus petit que le container
           ),
           child: Container(
-            width: 141,
+            width: 150,
             height: 200, // Un peu plus grande pour contenir les nouvelles informations
             padding: const EdgeInsets.all(8),
             child: Column(
@@ -566,6 +566,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
                         Text(
                           '${lastHauteur.toStringAsFixed(0)} mm',
                           style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+
                         ),
                         hauteurIcon,
                       ],
@@ -615,7 +616,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(15.0),
+      padding: const EdgeInsets.all(5.0),
       child: Column(
         children: [
           // Bouton pour ajouter une station favorite
@@ -636,7 +637,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
             children: [
               // Flèche gauche (compacte)
               SizedBox(
-                width: 10, // réduit la largeur, ajuste selon besoin
+                width: 15, // réduit la largeur, ajuste selon besoin
                 child: IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
@@ -648,7 +649,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
               // Liste des cartes favorites
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   height: 215,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -671,7 +672,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
 
               // Flèche droite (compacte)
               SizedBox(
-                width: 10, // réduit la largeur
+                width: 15, // réduit la largeur
                 child: IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
