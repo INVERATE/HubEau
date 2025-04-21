@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class BluePalette {
   // Couleur principale (utilisée pour les boutons, AppBar, liens actifs)
-  static const Color primary = Color(0xFF1565C0); // Bleu foncé
+  static const Color primary = Colors.indigoAccent; // Bleu indigo
   // Couleur secondaire (survols, hover, éléments actifs)
   static const Color secondary = Color(0xFF42A5F5); // Bleu clair
   // Couleur d'accent (pour mettre en avant un élément important)

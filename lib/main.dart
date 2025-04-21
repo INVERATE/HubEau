@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.grey[200],
+            backgroundColor: Colors.white,
             foregroundColor: Colors.black,
           ),
         ),
