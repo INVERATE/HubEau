@@ -62,7 +62,9 @@ class HubEauAPI {
   // Observations : par station et date
   Future<List<Observation>> getFlowByStationAndDate(
       String stationCode,
-      String date, {
+      String date,
+      {
+        String? type,
         int maxPages = 5,
       }) {
     final url = '$rootPath/observations_tr';
@@ -70,6 +72,7 @@ class HubEauAPI {
       'format': 'json',
       'code_entite': stationCode,
       'date_debut_obs': date,
+      'grandeur_hydro': type ?? '',
       'size': 1000,
     };
 

@@ -30,9 +30,10 @@ class _MyHomePageState extends State<MyHomePage> {
     _provider = ObservationProvider();
   }
 
+  // Fonction appelée lorsque l'utilisateur sélectionne une station
   void _handleStationSelected(String stationCode) {
     // Récupérerles données de l'API jusqu'au mois dernier plus 1 jour
-    _provider.selectStation(stationCode, DateTime.now().subtract(Duration(days: 31)).toIso8601String());
+    _provider.selectStation(stationCode, DateTime.now().subtract(Duration(days: 30)).toIso8601String());
   }
 
   @override
