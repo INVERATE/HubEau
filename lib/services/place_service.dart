@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 class PlaceService {
+  // clé de l'api google maps
   static const String _apiKey = "AIzaSyCyBxrN4LRkSI-vIKEKi4_2MraPeY4Zjxw";
 
   /// Fetch place information based on latitude and longitude
