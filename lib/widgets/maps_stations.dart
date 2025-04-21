@@ -3,8 +3,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../models/station_model.dart';
 import '../services/api.dart';
 import 'dart:async';
-import 'dart:ui' as ui;
-import 'package:flutter/services.dart';
 import '../provider/observation_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -162,7 +160,7 @@ class _MapScreenState extends State<MapScreen> {
         child: GoogleMap(   // la voila
           mapType: MapType.terrain,   // terrain pour avoir les reliefs (il existe aussi normal, hybrid, satellite
           onMapCreated: _onMapCreated,  // on fait appel à la méthode pour la carte
-          initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 6),   // elle est zoommer sur 6 comme ca on voit toute la France, plus on zoom plus c'est proche
+          initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 5),   // elle est zoommer sur 6 comme ca on voit toute la France, plus on zoom plus c'est proche
           markers: _markers,  // on place notre liste de markers
         ),
       ),

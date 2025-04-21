@@ -52,6 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Search_Bar(),
                     )]),
                   ),
+                  FavoriteStationsWidget(onStationSelected: _handleStationSelected),
                 ],
               ),
             ),
@@ -72,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       );
                     },
                   ),
-                  FavoriteStationsWidget(onStationSelected: _handleStationSelected),
+
                 ],
               ),
             ),
