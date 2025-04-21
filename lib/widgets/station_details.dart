@@ -4,12 +4,14 @@ import '../provider/observation_provider.dart';
 import '../models/station_model.dart';
 import '../services/api.dart';
 
+
 class StationDetails extends StatefulWidget {
   const StationDetails({super.key});
 
   @override
   _StationDetailsState createState() => _StationDetailsState();
 }
+
 
 class _StationDetailsState extends State<StationDetails> {
   Future<Station>? _stationFuture;
@@ -18,12 +20,14 @@ class _StationDetailsState extends State<StationDetails> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // Récupère la station sélectionnée depuis le Provider
+    // mais ne recharge que si UNIQUEMENT l'ID de la station change, pas d'autres variables
     final selectedStation = Provider.of<ObservationProvider>(context).stationId;
 
     // Ne recharge que si l'ID de la station change
     if (selectedStation != null && selectedStation != _lastStationId) {
-      _lastStationId = selectedStation;
-      _stationFuture = HubEauAPI().getStationByCode(selectedStation);
+      _lastStationId = selectedStation; // Stocke l'ID de la station pour la prochaine fois
+      _stationFuture = HubEauAPI().getStationByCode(selectedStation); // Charge les données de la station
     }
   }
 
@@ -31,13 +35,16 @@ class _StationDetailsState extends State<StationDetails> {
   Widget build(BuildContext context) {
     final selectedStation = Provider.of<ObservationProvider>(context).stationId;
 
+    // Si aucune station n'est sélectionnée, affiche un message
     if (selectedStation == null) {
       return _buildCard("Aucune station sélectionnée");
     }
 
+    // Si le chargement de l'API n'est pas encore terminé, affiche un message de chargement
     return FutureBuilder<Station>(
       future: _stationFuture,
       builder: (context, snapshot) {
+        // Si le chargement n'est pas terminé, affiche un message de chargement
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildCard("Chargement des informations...");
         } else if (snapshot.hasError) {
@@ -46,8 +53,10 @@ class _StationDetailsState extends State<StationDetails> {
           return _buildCard("Aucune donnée trouvée");
         }
 
+        // Récupère les données de la station
         final station = snapshot.data!;
 
+        // Affiche les informations de la station
         return Card(
           margin: const EdgeInsets.all(8.0),
           child: Padding(
@@ -55,15 +64,17 @@ class _StationDetailsState extends State<StationDetails> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Nom de la station avec icône et couleur en fonction de l'état "En service"
+                // Nom de la station avec icône et couleur de l'état "En service"
                 Row(
                   children: [
+                    // Icône de l'état "En service" avec 2 couleurs
                     Icon(
                       station.enService ? Icons.check_circle : Icons.cancel,
                       color: station.enService ? Colors.green : Colors.red,
                     ),
                     const SizedBox(width: 8),
                     Expanded(
+                      // Titre du widget
                       child: Text(
                         "Station : ${station.libelle}",
                         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis),
@@ -76,6 +87,7 @@ class _StationDetailsState extends State<StationDetails> {
                 // Titre souligné "Code" et "Code Commune"
                 Row(
                   children: [
+                    // _buildSectionTitle est une méthode qui retourne un widget Text avec le titre en gras et une taille de police de 12
                     _buildSectionTitle("Code : "),
                     Text(station.code, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12)),
                     SizedBox(width: 8),
@@ -95,8 +107,11 @@ class _StationDetailsState extends State<StationDetails> {
                 const SizedBox(height: 8),
 
                 // Affichage du commentaire sous forme de texte abrégé avec un popup
+                // Si le commentaire est null, le widget n'est pas affiché
                 if (station.commentaire != null)
+                  // GestureDetector permet de détecter un clic sur le widget
                   GestureDetector(
+                    // On appelle la méthode _showCommentDialog lorsque le widget est cliqué
                     onTap: () => _showCommentDialog(context, station.commentaire!),
                     child: Row(
                       children: [
@@ -104,7 +119,7 @@ class _StationDetailsState extends State<StationDetails> {
                         Expanded(
                           child: Text(
                             "Ouvrir",
-                            style: TextStyle(color: Colors.blue, fontSize: 12),
+                            style: TextStyle(color: Colors.indigoAccent, fontSize: 12, fontWeight: FontWeight.bold),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -119,6 +134,7 @@ class _StationDetailsState extends State<StationDetails> {
     );
   }
 
+  // Méthode qui retourne un widget Text avec le titre en gras et une taille de police de 12
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
@@ -129,12 +145,14 @@ class _StationDetailsState extends State<StationDetails> {
     );
   }
 
+  // Méthode qui affiche un popup avec le commentaire
   void _showCommentDialog(BuildContext context, String comment) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Commentaire complet"),
+          // Widget qui peut être scrollé
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -142,9 +160,14 @@ class _StationDetailsState extends State<StationDetails> {
               ],
             ),
           ),
+
+          // Boutons de fermeture du popup
           actions: <Widget>[
-            TextButton(
-              child: Text('Fermer'),
+            ElevatedButton.icon(
+              icon: Icon(Icons.close, color: Colors.indigoAccent),
+              label: Text("Fermer"),
+
+              // Ferme le popup
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -155,6 +178,9 @@ class _StationDetailsState extends State<StationDetails> {
     );
   }
 
+
+  // Méthode qui retourne un widget Card avec un message à l'intérieur
+  // Le message peut être une erreur ou un message de chargement
   Widget _buildCard(String message) {
     return Card(
       margin: const EdgeInsets.all(8.0),
