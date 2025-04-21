@@ -1,4 +1,4 @@
-// Permet de récupérer
+// Permet mettre en forme les données de l'API pour les observations
 
 class Observation {
   final String codeStation;

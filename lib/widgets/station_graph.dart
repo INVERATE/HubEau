@@ -46,32 +46,46 @@ class FlowChart extends StatelessWidget {
     final minY = (minVal - margin).clamp(double.negativeInfinity, double.infinity).toDouble();
     final maxY = maxVal + margin;
 
+    // Definition de la hauteur du widget
     final height = 130.0;
 
 
     // Construction du widget en fonction du chargement des données
     Widget content;
+    // Si le chargement des données est en cours, affiche un widget de chargement
     if (isLoading) {
       content = SizedBox(
         height: height,
         child: Center(child: CircularProgressIndicator()),
       );
-    } else if (observations.isEmpty) {
+    }
+
+    // Si aucune donnée n'est disponible, affiche un message
+    else if (observations.isEmpty) {
       content = SizedBox(
         height: height,
         child: Center(child: Text("Aucune donnée disponible")),
       );
-    } else {
+    }
+
+    // Si les données sont disponibles, affiche le graphique
+    else {
       content = LayoutBuilder(
         builder: (context, constraints) {
+          // Détermine si le layout est large ou réduit
           final isWideLayout = constraints.maxWidth > 400;
+
+          // Construction du widget en fonction du layout
           if (isWideLayout) {
             return SizedBox(
               height: height,
               child: Row(
                 children: [
+                  // Statistiques en colonne
                   _buildStatsColumn(type, moyenne, minVal, maxVal, observations),
                   const SizedBox(width: 10),
+
+                  // Graphique
                   Expanded(
                     child: _buildChart(
                       observations,
@@ -92,8 +106,11 @@ class FlowChart extends StatelessWidget {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Statistiques en wrap (layout réduit)
                 _buildStatsWrap(type, moyenne, minVal, maxVal, observations),
                 SizedBox(height: 16),
+
+                // Graphique
                 SizedBox(
                   height: height,
                   child: _buildChart(
@@ -123,6 +140,7 @@ class FlowChart extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Titre du widget
             Text(
               type == "Q" ? "Débit" : "Hauteur",
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -142,8 +160,8 @@ class FlowChart extends StatelessWidget {
     final premiereValeur = observations.first.resultatObs;
     final derniereValeur = observations.last.resultatObs;
     final difference = derniereValeur - premiereValeur;
-    final sign = difference > 0 ? "+" : "";
-    final unite = type == "Q" ? "L/s" : "mm";
+    final sign = difference > 0 ? "+" : ""; // Affiche le signe d'une différence
+    final unite = type == "Q" ? "L/s" : "mm"; // Définit l'unité en fonction du type
 
     return Padding(
       padding: const EdgeInsets.only(right: 10.0),
@@ -179,8 +197,8 @@ class FlowChart extends StatelessWidget {
     final premiereValeur = observations.first.resultatObs;
     final derniereValeur = observations.last.resultatObs;
     final difference = derniereValeur - premiereValeur;
-    final sign = difference > 0 ? "+" : "";
-    final unite = type == "Q" ? "L/s" : "mm";
+    final sign = difference > 0 ? "+" : ""; // Affiche le signe d'une différence
+    final unite = type == "Q" ? "L/s" : "mm"; // Définit l'unité en fonction du type
 
     return Wrap(
       spacing: 8,
@@ -243,17 +261,20 @@ class FlowChart extends StatelessWidget {
         maxY: maxY,
 
         // Infobulle
+        // Ligne en dessous du graphique lorsque l'utilisateur clique sur un point
         lineTouchData: LineTouchData(
           getTouchedSpotIndicator: (barData, spotIndexes) {
-            if (barData.color == Colors.redAccent) return [];
             return spotIndexes.map((index) => TouchedSpotIndicatorData(
               FlLine(color: type == "Q" ? Colors.green : Colors.blue, strokeWidth: 2, dashArray: [5, 5]),
               FlDotData(show: true),
             )).toList();
           },
+
+          // Infobulle sur le graphique lorsque l'utilisateur clique sur un point
           touchTooltipData: LineTouchTooltipData(
-            tooltipBgColor: Colors.black54,
+            tooltipBgColor: Colors.black54, // couleur du fond de l'infobulle
             getTooltipItems: (spots) {
+              // retourne les données de l'infobulle
               return spots
                   .map((spot) => LineTooltipItem(
                 '${dateHourLabels[spot.spotIndex]}\n${spot.y.toStringAsFixed(1)} ${type == "Q" ? "L/s" : "mm"}',
@@ -264,10 +285,11 @@ class FlowChart extends StatelessWidget {
         ),
 
         // titres des axes
+        // Affichage des valeurs sur l'axe y
         titlesData: FlTitlesData(
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
-              showTitles: false,
+              showTitles: false, // PAS AFFICHE, MAIS POSSIBLE DE L'UTILISER SI BESOIN
               reservedSize: 70,
               interval: (range / 5).clamp(1, double.infinity),
               getTitlesWidget: (value, meta) {
@@ -278,12 +300,14 @@ class FlowChart extends StatelessWidget {
               },
             ),
           ),
+
+          // Affichage des dates sur l'axe x
           rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
           topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
-              showTitles: true,
-              interval: (observations.length / 5).floorToDouble().clamp(1, double.infinity),
+              showTitles: true, // Affiche les titres
+              interval: (observations.length / 5).floorToDouble().clamp(1, double.infinity), // Affiche les titres sur 5 intervalles
               getTitlesWidget: (value, meta) {
                 int index = value.toInt();
                 if (index >= 0 && index < dateLabels.length-1) {
@@ -292,6 +316,7 @@ class FlowChart extends StatelessWidget {
                     style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87),
                   );
                 }
+                // Si l'index est hors limites, retourne un widget vide
                 return const SizedBox.shrink();
               },
             ),
@@ -302,9 +327,11 @@ class FlowChart extends StatelessWidget {
         borderData: FlBorderData(show: true, border: Border.all(color: Colors.black26, width: 2)),
         gridData: FlGridData(
           show: true,
+          // ligne horizontale
           getDrawingHorizontalLine: (value) {
             return FlLine(color: Colors.black12, strokeWidth: 1);
           },
+          // ligne verticale
           getDrawingVerticalLine: (value) {
             return FlLine(color: Colors.black12, strokeWidth: 1);
           },
@@ -313,21 +340,21 @@ class FlowChart extends StatelessWidget {
         // données du graphique
         lineBarsData: [
           LineChartBarData(
-            spots: spots,
-            isCurved: true,
-            color: type == "Q" ? Colors.green : Colors.blue,
-            dotData: FlDotData(show: false),
-            belowBarData: BarAreaData(show: false),
+            spots: spots, // données du graphique
+            isCurved: true, // lissage du graphique
+            color: type == "Q" ? Colors.green : Colors.blue, // couleur du graphique
+            dotData: FlDotData(show: false), // pas de cercles affichés pour chaque point
+            belowBarData: BarAreaData(show: false), // pas d'aire sous le graphique
           ),
         ],
 
         // ligne de la moyenne
         extraLinesData: ExtraLinesData(horizontalLines: [
           HorizontalLine(
-            y: moyenne,
+            y: moyenne, // valeur de la moyenne
             color: Colors.black54,
             dashArray: [5, 5],
-            label: HorizontalLineLabel(show: false),
+            label: HorizontalLineLabel(show: false), // pas de label pour la ligne de la moyenne
           ),
         ]),
       ),
