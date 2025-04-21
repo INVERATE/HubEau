@@ -41,49 +41,53 @@ class _Search_BarState extends State<Search_Bar> {
   // creation du widget pour la bar textahead
   @override
   Widget build(BuildContext context) {  // méthode build pour savoir à quoi va ressembler le widget en fonction de l'état et des configuration, buildcontext est utilisé pour récuperer des info sur widget tel que sa location dans l'arbre des widget mais aussi la configuration, l'état, le theme ...
-    return Scaffold(
-      body: Padding(  // sa taille
+    return Padding(  // sa taille
         padding: const EdgeInsets.all(16.0),
-        child: TypeAheadField<String>(  // la barre de rechercghe qui prendra comme type de variable des String <String>
-          controller: _typeAheadController,   // on appel le controller
-          suggestionsCallback: (pattern) {  // le partern c'est l'élément qui est écrit dans la barre de recherche EX : patern : 5
-            return dep.where((d) => d.contains(pattern)).toList();  // ici si le panten est reconnu alors on affuiche une liste des éléments qui le contiennent EX : la liste va etre : 15, 51,53, 25,.....
-          },
+        child: Card(
+          child: TypeAheadField<String>(  // la barre de rechercghe qui prendra comme type de variable des String <String>
+            controller: _typeAheadController,   // on appel le controller
+            suggestionsCallback: (pattern) {  // le partern c'est l'élément qui est écrit dans la barre de recherche EX : patern : 5
+              return dep.where((d) => d.contains(pattern)).toList();  // ici si le panten est reconnu alors on affuiche une liste des éléments qui le contiennent EX : la liste va etre : 15, 51,53, 25,.....
+            },
 
-          builder: (context, controller, focusNode) {   // créer un widget enfant
-            return TextField(   // widget barre de recherche ici textfield comme ca on peut ecrire dedans
-              controller: controller,
-              focusNode: focusNode,
-              autofocus: false, // evite que le clavier apparaisse automatiquement
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Choisissez un département', // petit mot qui sera en gris pour indiquer quoi ecrire à l'utilisateur
-              ),
+            builder: (context, controller, focusNode) {   // créer un widget enfant
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(   // widget barre de recherche ici textfield comme ca on peut ecrire dedans
+                  controller: controller,
+                  focusNode: focusNode,
+                  autofocus: false, // evite que le clavier apparaisse automatiquement
+                  decoration: InputDecoration(
+                    //border: OutlineInputBorder(),
+                    //filled: true,
+                    labelText: ' Choisissez un département', // petit mot qui sera en gris pour indiquer quoi ecrire à l'utilisateur
+                  ),
 
-              // on Submitted permet de choisir un department en appuyant que la touche entrer du clavier
-              onSubmitted: (val) {  // une fois que l'utilisateur a fini d'écrire on recupère son texte (val)
-                if (dep.contains(val)) {  // si le texte existe dans derpartement
-                  _handleDepartmentSelection(val); // on va le chercher dans l'api
-                } else {
-                  print("Département non reconnu : $val"); // dans le terminal on afficha ca
-                }
-              },
-            );
-          },
-
-          itemBuilder: (context, suggestion) {  // créer une liste de item widget
-            return ListTile(  // petit widget pour afficher la liste des sugestion
-              title: Text(suggestion),
+                  // on Submitted permet de choisir un department en appuyant que la touche entrer du clavier
+                  onSubmitted: (val) {  // une fois que l'utilisateur a fini d'écrire on recupère son texte (val)
+                    if (dep.contains(val)) {  // si le texte existe dans derpartement
+                      _handleDepartmentSelection(val); // on va le chercher dans l'api
+                    } else {
+                      print("Département non reconnu : $val"); // dans le terminal on afficha ca
+                    }
+                  },
+                ),
               );
-          },
+            },
 
-          // on Selected permet de choisir un department en appuyant sur un élément de la liste
-          onSelected: (String val) {
-            _handleDepartmentSelection(val); // on fait appel à l'api avec la valeur selectionner
-          },
+            itemBuilder: (context, suggestion) {  // créer une liste de item widget
+              return ListTile(  // petit widget pour afficher la liste des sugestion
+                title: Text(suggestion),
+                );
+            },
+
+            // on Selected permet de choisir un department en appuyant sur un élément de la liste
+            onSelected: (String val) {
+              _handleDepartmentSelection(val); // on fait appel à l'api avec la valeur selectionner
+            },
+          ),
         ),
-      ),
-    );
+      );
   }
 }
 

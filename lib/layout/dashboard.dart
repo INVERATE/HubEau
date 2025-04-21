@@ -46,12 +46,11 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(
               child: Column(
                 children: [
-                  SizedBox(
+                  Expanded(
+                    child: Stack(children: [MapScreen(onStationSelected: _handleStationSelected), SizedBox(
                       height: 100,
                       child: Search_Bar(),
-                    ),
-                  Expanded(
-                    child: MapScreen(onStationSelected: _handleStationSelected),
+                    )]),
                   ),
                 ],
               ),
