@@ -344,7 +344,10 @@ class FlowChart extends StatelessWidget {
             isCurved: true, // lissage du graphique
             color: type == "Q" ? Colors.green : Colors.blue, // couleur du graphique
             dotData: FlDotData(show: false), // pas de cercles affichés pour chaque point
-            belowBarData: BarAreaData(show: false), // pas d'aire sous le graphique
+            belowBarData: BarAreaData(
+              show: true,
+              color: (type == "Q" ? Colors.green : Colors.blue).withOpacity(0.3), // ← ici
+            ), // pas d'aire sous le graphique
           ),
         ],
 

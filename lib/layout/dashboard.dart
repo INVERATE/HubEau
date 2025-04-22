@@ -39,6 +39,17 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('HubEau'),
+            const SizedBox(width: 8),
+            const Icon(Icons.water_drop),
+          ],
+        ),
+      ),
       body: ChangeNotifierProvider.value(
         value: _provider,
         child: Row(
@@ -83,5 +94,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
-

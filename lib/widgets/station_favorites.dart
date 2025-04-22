@@ -622,8 +622,8 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
           // Bouton pour ajouter une station favorite
           ElevatedButton.icon(
             onPressed: addFavoriteCard,
-            icon: const Icon(Icons.favorite_border),
-            label: const Text('Ajouter une station favorite'),
+            icon: const Icon(Icons.favorite, color: Colors.indigoAccent),
+            label: const Text('Ajouter aux favoris'),
           ),
           const SizedBox(height: 10),
 
