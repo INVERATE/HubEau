@@ -492,7 +492,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
           ),
           child: Container(
             width: 150,
-            height: 200, // Un peu plus grande pour contenir les nouvelles informations
+            height: 190, // Un peu plus grande pour contenir les nouvelles informations
             padding: const EdgeInsets.all(8),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -592,8 +592,6 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
                   ],
                 ),
 
-                // Seuils et dernière mise à jour
-                Divider(height: 8, color: Colors.grey.shade300),
                 Text(
                   lastUpdateText,
                   style: const TextStyle(fontSize: 9, fontStyle: FontStyle.italic),
@@ -625,7 +623,6 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
             icon: const Icon(Icons.favorite, color: Colors.indigoAccent),
             label: const Text('Ajouter aux favoris'),
           ),
-          const SizedBox(height: 10),
 
           // Zone de scroll horizontal avec flèches
           favoriteStations.isEmpty
@@ -637,7 +634,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
             children: [
               // Flèche gauche (compacte)
               SizedBox(
-                width: 15, // réduit la largeur, ajuste selon besoin
+                height: 215,
                 child: IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
@@ -648,23 +645,26 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
 
               // Liste des cartes favorites
               Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  height: 215,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: favoriteStations
-                          .map((cardData) => Padding(
-                        padding: const EdgeInsets.only(right: 6.0),
-                        child: _buildFavoriteCard(cardData),
-                      ))
-                          .toList(),
+                child: Card(
+                  //padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  //height: 215,
+                  //decoration: BoxDecoration(
+                  //  color: Colors.white,
+                  //  borderRadius: BorderRadius.circular(20),
+                  //),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SingleChildScrollView(
+                      controller: _scrollController,
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: favoriteStations
+                            .map((cardData) => Padding(
+                          padding: const EdgeInsets.only(right: 6.0),
+                          child: _buildFavoriteCard(cardData),
+                        ))
+                            .toList(),
+                      ),
                     ),
                   ),
                 ),
@@ -672,7 +672,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
 
               // Flèche droite (compacte)
               SizedBox(
-                width: 15, // réduit la largeur
+                height: 215,
                 child: IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
