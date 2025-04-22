@@ -58,7 +58,7 @@ class _StationDetailsState extends State<StationDetails> {
 
         // Affiche les informations de la station
         return Card(
-          margin: const EdgeInsets.all(8.0),
+          
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Column(
@@ -183,7 +183,7 @@ class _StationDetailsState extends State<StationDetails> {
   // Le message peut être une erreur ou un message de chargement
   Widget _buildCard(String message) {
     return Card(
-      margin: const EdgeInsets.all(8.0),
+
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Text(message),
