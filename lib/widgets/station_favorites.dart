@@ -447,13 +447,25 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
     final borderColor = _getBorderColor(cardData);
 
     // Icônes pour indiquer si la valeur est supérieure ou inférieure à la moyenne
-    Widget debitIcon = lastDebit > meanDebit
-        ? const Icon(Icons.arrow_upward, color: Colors.green, size: 16)
-        : const Icon(Icons.arrow_downward, color: Colors.orange, size: 16);
+    // Icône débit
+    Widget debitIcon;
+    if (lastDebit == 0) {
+      debitIcon = const Icon(Icons.help_outline, color: Colors.grey, size: 16); // valeur manquante
+    } else if (lastDebit > meanDebit) {
+      debitIcon = const Icon(Icons.arrow_upward, color: Colors.green, size: 16);
+    } else {
+      debitIcon = const Icon(Icons.arrow_downward, color: Colors.orange, size: 16);
+    }
 
-    Widget hauteurIcon = lastHauteur > meanHauteur
-        ? const Icon(Icons.arrow_upward, color: Colors.green, size: 16)
-        : const Icon(Icons.arrow_downward, color: Colors.orange, size: 16);
+// Icône hauteur
+    Widget hauteurIcon;
+    if (lastHauteur == 0) {
+      hauteurIcon = const Icon(Icons.help_outline, color: Colors.grey, size: 16); // valeur manquante
+    } else if (lastHauteur > meanHauteur) {
+      hauteurIcon = const Icon(Icons.arrow_upward, color: Colors.green, size: 16);
+    } else {
+      hauteurIcon = const Icon(Icons.arrow_downward, color: Colors.orange, size: 16);
+    }
 
     // Formatage de la dernière mise à jour
     final lastUpdateText = 'Mis à jour: ${_formatDateTime(cardData.lastUpdate)}';
@@ -470,17 +482,17 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: borderColor, width: 3.0),
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(15.0),
         ),
         child: Card(
           elevation: 3,
           margin: EdgeInsets.zero, // Pour que la bordure soit bien visible
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(6.0), // Légèrement plus petit que le container
+            borderRadius: BorderRadius.circular(15.0), // Légèrement plus petit que le container
           ),
           child: Container(
-            width: 160,
-            height: 240, // Un peu plus grande pour contenir les nouvelles informations
+            width: 150,
+            height: 200, // Un peu plus grande pour contenir les nouvelles informations
             padding: const EdgeInsets.all(8),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -507,6 +519,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
                 ),
 
                 // Récupération asynchrone des infos de la station
+
                 FutureBuilder<Station>(
                   future: _getStation(cardData.stationId),
                   builder: (context, snapshot) {
@@ -546,11 +559,14 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
                       'Hauteur:',
                       style: TextStyle(fontSize: 12),
                     ),
+
+
                     Row(
                       children: [
                         Text(
                           '${lastHauteur.toStringAsFixed(0)} mm',
                           style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+
                         ),
                         hauteurIcon,
                       ],
@@ -600,7 +616,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(5.0),
       child: Column(
         children: [
           // Bouton pour ajouter une station favorite
@@ -609,26 +625,32 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
             icon: const Icon(Icons.favorite_border),
             label: const Text('Ajouter une station favorite'),
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 10),
 
           // Zone de scroll horizontal avec flèches
           favoriteStations.isEmpty
               ? const Center(
             child: Text('Aucune station favorite. Ajoutez-en une en cliquant sur le bouton ci-dessus.'),
           )
-              : Row(
+              :
+          Row(
             children: [
-              // Flèche gauche
-              IconButton(
-                onPressed: scrollLeft,
-                icon: const Icon(Icons.arrow_back_ios),
+              // Flèche gauche (compacte)
+              SizedBox(
+                width: 15, // réduit la largeur, ajuste selon besoin
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: scrollLeft,
+                  icon: const Icon(Icons.arrow_back_ios, size: 16), // petite icône
+                ),
               ),
 
               // Liste des cartes favorites
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.all(10),
-                  height: 260, // Augmentée pour s'adapter à la nouvelle taille des cartes
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  height: 215,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
@@ -639,7 +661,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
                     child: Row(
                       children: favoriteStations
                           .map((cardData) => Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
+                        padding: const EdgeInsets.only(right: 6.0),
                         child: _buildFavoriteCard(cardData),
                       ))
                           .toList(),
@@ -648,13 +670,19 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
                 ),
               ),
 
-              // Flèche droite
-              IconButton(
-                onPressed: scrollRight,
-                icon: const Icon(Icons.arrow_forward_ios),
+              // Flèche droite (compacte)
+              SizedBox(
+                width: 15, // réduit la largeur
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: scrollRight,
+                  icon: const Icon(Icons.arrow_forward_ios, size: 16),
+                ),
               ),
             ],
           ),
+
         ],
       ),
     );
