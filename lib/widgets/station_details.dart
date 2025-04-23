@@ -17,6 +17,9 @@ class StationDetails extends StatefulWidget {
 class _StationDetailsState extends State<StationDetails> {
   Future<Station>? _stationFuture;
   String? _lastStationId;
+  // importer les images de l'asset
+  Image image_enService = Image.asset('goutte-deau.png');
+  Image image_horsService = Image.asset('goutte-deau-gris.png');
 
   @override
   void didChangeDependencies() {
@@ -62,13 +65,12 @@ class _StationDetailsState extends State<StationDetails> {
           
           child: Padding(
             padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Wrap(
               children: [
                 // Nom de la station avec icône et couleur de l'état "En service"
                 Row(
                   children: [
-                    // Icône de l'état "En service" avec 2 couleurs
+                    // Icône de l'état "En service" avec 2 couleurs, en utilisant les images de l'asset
                     Icon(
                       station.enService ? Icons.check_circle : Icons.cancel,
                       color: station.enService ? Colors.green : Colors.red,
@@ -91,12 +93,15 @@ class _StationDetailsState extends State<StationDetails> {
                     // _buildSectionTitle est une méthode qui retourne un widget Text avec le titre en gras et une taille de police de 12
                     _buildSectionTitle("Code : "),
                     Text(station.code, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12)),
-                    SizedBox(width: 8),
-                    _buildSectionTitle("Code commune : "),
-                    Text(station.codeCommune, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12)),
                   ],
                 ),
                 const SizedBox(height: 8),
+                Row(
+                  children: [
+                    _buildSectionTitle("Code Commune : "),
+                    Text(station.codeCommune, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12)),
+                  ],
+                ),
 
                 // Titre souligné "Latitude / Longitude"
                 Row(
@@ -164,10 +169,8 @@ class _StationDetailsState extends State<StationDetails> {
 
           // Boutons de fermeture du popup
           actions: <Widget>[
-            ElevatedButton.icon(
-              icon: Icon(Icons.close, color: Colors.indigoAccent),
-              label: Text("Fermer"),
-
+            TextButton(
+              child: Text("Fermer"),
               // Ferme le popup
               onPressed: () {
                 Navigator.of(context).pop();

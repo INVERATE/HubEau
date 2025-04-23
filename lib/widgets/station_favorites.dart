@@ -7,6 +7,7 @@ import '../provider/observation_provider.dart'; // Accès au provider des observ
 import '../models/station_model.dart'; // Modèle de station
 import '../models/observation_model.dart'; // Modèle d'observation (à importer)
 import '../services/api.dart'; // API pour récupérer les données des stations
+import '../layout/colors.dart'; // Palette de couleurs
 
 // Modèle représentant une carte de station favorite
 class FavoriteCardData {
@@ -221,9 +222,9 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
     required List<Observation> hauteurObs,
   }) {
     double minThresholdDebit = 0.0;
-    double maxThresholdDebit = 1000.0;
+    double maxThresholdDebit = 300000.0;
     double minThresholdHauteur = 0.0;
-    double maxThresholdHauteur = 1000.0;
+    double maxThresholdHauteur = 30000.0;
 
     showDialog(
       context: context,
@@ -232,21 +233,23 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Text('Il est nécessaire de définir des seuils d\'alertes pour la station $stationId.', style: const TextStyle(fontSize: 12),),
+            const SizedBox(height: 8),
             TextField(
               decoration: const InputDecoration(labelText: 'Seuil minimum (hauteur en mm)'),
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 minThresholdHauteur = double.tryParse(value) ?? 0.0;
               },
-              controller: TextEditingController(text: '0.0'),
+              controller: TextEditingController(text: '0'),
             ),
             TextField(
               decoration: const InputDecoration(labelText: 'Seuil maximum (hauteur en mm)'),
               keyboardType: TextInputType.number,
               onChanged: (value) {
-                maxThresholdHauteur = double.tryParse(value) ?? 1000.0;
+                maxThresholdHauteur = double.tryParse(value) ?? 30000.0;
               },
-              controller: TextEditingController(text: '1000.0'),
+              controller: TextEditingController(text: '30000'),
             ),
             TextField(
               decoration: const InputDecoration(labelText: 'Seuil minimum (débit en L/s)'),
@@ -254,15 +257,15 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
               onChanged: (value) {
                 minThresholdDebit = double.tryParse(value) ?? 0.0;
               },
-              controller: TextEditingController(text: '0.0'),
+              controller: TextEditingController(text: '0'),
             ),
             TextField(
               decoration: const InputDecoration(labelText: 'Seuil maximum (débit en L/s)'),
               keyboardType: TextInputType.number,
               onChanged: (value) {
-                maxThresholdDebit = double.tryParse(value) ?? 1000.0;
+                maxThresholdDebit = double.tryParse(value) ?? 300000.0;
               },
-              controller: TextEditingController(text: '1000.0'),
+              controller: TextEditingController(text: '300000'),
             ),
           ],
         ),
@@ -337,7 +340,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
               decoration: const InputDecoration(labelText: 'Seuil maximum (hauteur en mm)'),
               keyboardType: TextInputType.number,
               onChanged: (value) {
-                maxThresholdHauteur = double.tryParse(value) ?? 1000.0;
+                maxThresholdHauteur = double.tryParse(value) ?? 30000.0;
               },
               controller: TextEditingController(text: card.maxThresholdHauteur.toString()),
             ),
@@ -353,7 +356,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
               decoration: const InputDecoration(labelText: 'Seuil maximum (débit en L/s)'),
               keyboardType: TextInputType.number,
               onChanged: (value) {
-                maxThresholdDebit = double.tryParse(value) ?? 1000.0;
+                maxThresholdDebit = double.tryParse(value) ?? 300000.0;
               },
               controller: TextEditingController(text: card.maxThresholdDebit.toString()),
             ),
@@ -453,18 +456,22 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
       debitIcon = const Icon(Icons.help_outline, color: Colors.grey, size: 16); // valeur manquante
     } else if (lastDebit > meanDebit) {
       debitIcon = const Icon(Icons.arrow_upward, color: Colors.green, size: 16);
-    } else {
+    } else if (lastDebit < meanDebit){
       debitIcon = const Icon(Icons.arrow_downward, color: Colors.orange, size: 16);
+    } else {
+      debitIcon = const Icon(Icons.arrow_forward, color: Colors.grey, size: 16);
     }
 
-// Icône hauteur
+    // Icône hauteur
     Widget hauteurIcon;
     if (lastHauteur == 0) {
       hauteurIcon = const Icon(Icons.help_outline, color: Colors.grey, size: 16); // valeur manquante
     } else if (lastHauteur > meanHauteur) {
       hauteurIcon = const Icon(Icons.arrow_upward, color: Colors.green, size: 16);
-    } else {
+    } else if (lastHauteur < meanHauteur) {
       hauteurIcon = const Icon(Icons.arrow_downward, color: Colors.orange, size: 16);
+    } else {
+      hauteurIcon = const Icon(Icons.arrow_forward, color: Colors.grey, size: 16);
     }
 
     // Formatage de la dernière mise à jour
@@ -482,17 +489,17 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: borderColor, width: 3.0),
-          borderRadius: BorderRadius.circular(15.0),
+          borderRadius: BorderRadius.circular(8.0),
         ),
         child: Card(
           elevation: 3,
           margin: EdgeInsets.zero, // Pour que la bordure soit bien visible
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0), // Légèrement plus petit que le container
+            borderRadius: BorderRadius.circular(8.0), // Légèrement plus petit que le container
           ),
           child: Container(
             width: 150,
-            height: 190, // Un peu plus grande pour contenir les nouvelles informations
+            //height: 190, // Un peu plus grande pour contenir les nouvelles informations
             padding: const EdgeInsets.all(8),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -550,7 +557,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
                     );
                   },
                 ),
-
+                SizedBox(height: 10),
                 // Données d'observation avec icônes
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -614,7 +621,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(5.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(
         children: [
           // Bouton pour ajouter une station favorite
@@ -627,14 +634,20 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
           // Zone de scroll horizontal avec flèches
           favoriteStations.isEmpty
               ? const Center(
-            child: Text('Aucune station favorite. Ajoutez-en une en cliquant sur le bouton ci-dessus.'),
+            child: Column(
+              children: [
+                SizedBox(height: 20),
+                Text('Aucune station favorite. Ajoutez-en une en cliquant sur le bouton ci-dessus.'),
+                SizedBox(height: 20),
+              ],
+            ),
           )
               :
           Row(
             children: [
               // Flèche gauche (compacte)
               SizedBox(
-                height: 215,
+                height: 50,
                 child: IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
@@ -672,7 +685,7 @@ class _FavoriteStationsWidgetState extends State<FavoriteStationsWidget> {
 
               // Flèche droite (compacte)
               SizedBox(
-                height: 215,
+                height: 50,
                 child: IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),

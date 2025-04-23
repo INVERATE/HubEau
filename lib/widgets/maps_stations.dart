@@ -96,6 +96,7 @@ class _MapScreenState extends State<MapScreen> {
           position: LatLng(station.latitude, station.longitude),  // pour position la latitude et la longitude de la station
           infoWindow: InfoWindow(
             title: station.libelle,   // et une petite popo up avec son libelle quand on clique sur le markers
+            snippet: "Station en service",
             ),
             onTap: () {   // cela permettra de faire marcher les graph quand on tape sur le markers
               widget.onStationSelected?.call(station.code);   // Appel du callback, permet de passer la station sélectionnée au parent
@@ -113,6 +114,8 @@ class _MapScreenState extends State<MapScreen> {
             position: LatLng(station.latitude, station.longitude),
             infoWindow: InfoWindow(
               title: station.libelle,
+              snippet: "Station hors service",
+
             ),
             onTap: () {
               widget.onStationSelected?.call(station.code);   // Appel du callback, permet de passer la station sélectionnée au parent
@@ -154,15 +157,16 @@ class _MapScreenState extends State<MapScreen> {
   // implémentation de la carte google maps
   @override
   Widget build(BuildContext context) {
-    return Card(  // elle se situe dans une card
-      child: Padding(   // elle a cette taille grâce à padding
-        padding: const EdgeInsets.all(8.0),
-        child: GoogleMap(   // la voila
-          mapType: MapType.terrain,   // terrain pour avoir les reliefs (il existe aussi normal, hybrid, satellite
-          onMapCreated: _onMapCreated,  // on fait appel à la méthode pour la carte
-          initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 5),   // elle est zoommer sur 6 comme ca on voit toute la France, plus on zoom plus c'est proche
-          markers: _markers,  // on place notre liste de markers
-        ),
+    return Card(// elle se situe dans une card
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12), // ici tu choisis le rayon
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: GoogleMap(   // la voila
+        mapType: MapType.terrain,   // terrain pour avoir les reliefs (il existe aussi normal, hybrid, satellite
+        onMapCreated: _onMapCreated,  // on fait appel à la méthode pour la carte
+        initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 5),   // elle est zoommer sur 6 comme ca on voit toute la France, plus on zoom plus c'est proche
+        markers: _markers,  // on place notre liste de markers
       ),
     );
   }

@@ -65,7 +65,7 @@ class HubEauAPI {
       String date,
       {
         String? type,
-        int maxPages = 5,
+        int maxPages = 10,
       }) {
     final url = '$rootPath/observations_tr';
     final query = {

@@ -1,4 +1,6 @@
 // Widgets
+import 'package:test_flutter_api/layout/colors.dart';
+
 import '../../widgets/test_widget.dart';
 import '../../widgets/station_graph.dart';
 import '../../widgets/station_favorites.dart';
@@ -39,15 +41,28 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('HubEau'),
-            const SizedBox(width: 8),
-            const Icon(Icons.water_drop),
-          ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+          child: Container(
+            decoration: const BoxDecoration(
+            gradient: LinearGradient(
+            colors: [BluePalette.secondary, BluePalette.primary], // remplace par tes couleurs
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            ),
+          ),
+          child: AppBar(
+            centerTitle: true,
+            backgroundColor: Colors.transparent,
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.water_drop),
+                const SizedBox(width: 12),
+                const Text('Hydrométrie des stations françaises'),
+              ],
+            ),
+          ),
         ),
       ),
       body: ChangeNotifierProvider.value(
@@ -58,11 +73,14 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Column(
                 children: [
                   Expanded(
-                    child: Stack(children: [MapScreen(onStationSelected: _handleStationSelected), SizedBox(
-                      height: 100,
-                      child: Search_Bar(),
-                    )]),
+                    child: Stack(
+                      children: [
+                        MapScreen(onStationSelected: _handleStationSelected),
+                        Search_Bar(),
+                      ],
+                    ),
                   ),
+                  // reste fixe sous la carte
                   FavoriteStationsWidget(onStationSelected: _handleStationSelected),
                 ],
               ),

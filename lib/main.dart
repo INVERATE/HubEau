@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_flutter_api/layout/colors.dart';
 import 'layout/dashboard.dart';
+import 'dart:ui' as ui;
 
 
 void main() {
@@ -22,12 +23,29 @@ class MyApp extends StatelessWidget {
           shadowColor: BluePalette.accent,
           margin: EdgeInsets.all(12),
         ),
+
+        dialogTheme: DialogTheme(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shadowColor: BluePalette.accent,
+        ),
+
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: BluePalette.primary,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        ),
+
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: BluePalette.background,
+
         appBarTheme: const AppBarTheme(
           backgroundColor: BluePalette.primary,
           foregroundColor: Colors.white,
         ),
+
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
@@ -35,6 +53,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
+
       home: const MyHomePage(),
     );
   }

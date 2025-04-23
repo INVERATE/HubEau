@@ -47,25 +47,20 @@ class FlowChart extends StatelessWidget {
     final maxY = maxVal + margin;
 
     // Definition de la hauteur du widget
-    final height = 130.0;
+    final height = 140.0;
 
 
     // Construction du widget en fonction du chargement des données
     Widget content;
     // Si le chargement des données est en cours, affiche un widget de chargement
     if (isLoading) {
-      content = SizedBox(
-        height: height,
-        child: Center(child: CircularProgressIndicator()),
-      );
+      content = SizedBox(height: height, child: Center(child: CircularProgressIndicator()));
     }
 
     // Si aucune donnée n'est disponible, affiche un message
     else if (observations.isEmpty) {
-      content = SizedBox(
-        height: height,
-        child: Center(child: Text("Aucune donnée disponible")),
-      );
+      // Si aucune donnée n'est disponible, affiche un message
+      content = SizedBox(height: height, child: Center(child: Text("Aucune donnée disponible")));
     }
 
     // Si les données sont disponibles, affiche le graphique
@@ -346,7 +341,7 @@ class FlowChart extends StatelessWidget {
             dotData: FlDotData(show: false), // pas de cercles affichés pour chaque point
             belowBarData: BarAreaData(
               show: true,
-              color: (type == "Q" ? Colors.green : Colors.blue).withOpacity(0.3), // ← ici
+              color: (type == "Q" ? Colors.green : Colors.blue).withOpacity(0.3),
             ), // pas d'aire sous le graphique
           ),
         ],
