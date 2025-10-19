@@ -2,7 +2,7 @@
 
 A real-time dashboard for visualizing water levels and flow rates at **hydrometric stations**, powered by the **Hub'Eau Hydrometry API**.
 
-![Screenshot of the dashboard showing a map, a station details card, and two time-series graphs for water level (Hauteur) and flow rate (Débit).]()
+![Screenshot of the dashboard showing a map, a station details card, and two time-series graphs for water level (Hauteur) and flow rate (Débit).](https://github.com/INVERATE/HubEau/blob/master/images/Capture%20d'%C3%A9cran%202025-04-23%20143406.png?raw=true)
 
 ---
 
@@ -18,3 +18,7 @@ A real-time dashboard for visualizing water levels and flow rates at **hydrometr
 * **Favorites Panel**: Keep an eye on multiple critical stations at once with a simplified card view.
 
 ---
+
+![Example of custom threshold](<img width="1919" height="950" alt="image" src="https://github.com/user-attachments/assets/fbc5176e-ed9d-456e-ac42-5193584232c0" />
+)
+![Details received from the API](https://github.com/INVERATE/HubEau/blob/master/images/Capture%20d'%C3%A9cran%202025-04-23%20143910.png?raw=true)
