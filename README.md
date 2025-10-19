@@ -19,6 +19,5 @@ A real-time dashboard for visualizing water levels and flow rates at **hydrometr
 
 ---
 
-![Example of custom threshold](<img width="1919" height="950" alt="image" src="https://github.com/user-attachments/assets/fbc5176e-ed9d-456e-ac42-5193584232c0" />
-)
+![Example of custom threshold](https://github.com/INVERATE/HubEau/blob/master/images/Capture%20d'%C3%A9cran%202025-04-23%20143852.png?raw=true)
 ![Details received from the API](https://github.com/INVERATE/HubEau/blob/master/images/Capture%20d'%C3%A9cran%202025-04-23%20143910.png?raw=true)
